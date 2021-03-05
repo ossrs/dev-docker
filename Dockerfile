@@ -2,7 +2,7 @@
 ############################################################
 # build
 ############################################################
-ARG repo=ossrs/srs:dev
+ARG repo=registry.cn-hangzhou.aliyuncs.com/ossrs/srs:dev
 FROM ${repo} AS build
 COPY doc /usr/local/srs/doc
 
