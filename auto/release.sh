@@ -4,6 +4,7 @@ SRS_FILTER=`git branch|grep \*|awk '{print $2}'`
 SRS_GIT=$HOME/git/srs
 SRS_TAG=
 SRS_MAJOR=
+CHECK_BRANCH=YES
 
 # linux shell color support.
 RED="\\033[31m"
@@ -49,8 +50,11 @@ do
         --v2)                           SRS_FILTER=v2             ;;
         -v3)                            SRS_FILTER=v3             ;;
         --v3)                           SRS_FILTER=v3             ;;
+        -v4)                            SRS_FILTER=v4             ;;
+        --v4)                           SRS_FILTER=v4             ;;
         --git)                          SRS_GIT=$value            ;;
         --tag)                          SRS_TAG=$value            ;;
+        --any-branch)                   CHECK_BRANCH=NO           ;;
 
         *)
             echo "$0: error: invalid option \"$option\", @see $0 --help"
@@ -64,7 +68,7 @@ if [[ -z $SRS_FILTER ]]; then
   help=yes
 fi
 
-if [[ $SRS_FILTER != v2 && $SRS_FILTER != v3 ]]; then
+if [[ $SRS_FILTER != v2 && $SRS_FILTER != v3 && $SRS_FILTER != v4 ]]; then
   echo "Invalid filter $SRS_FILTER"
   help=yes
 fi
@@ -74,15 +78,32 @@ if [[ ! -d $SRS_GIT ]]; then
   help=yes
 fi
 
-SRS_BRANCH=`(cd $SRS_GIT && git branch|grep \*|awk '{print $2}')`
-if [[ $? -ne 0 ]]; then
-  echo "Invalid branch in $SRS_GIT"
-  exit -1
+if [[ $help == yes ]]; then
+    cat << END
+
+  -h, --help    Print this message
+
+  -v2, --v2     Package the latest tag of 2.0release branch, such as v2.0-r7.
+  -v3, --v3     Package the latest tag of 3.0release branch, such as v3.0-a2.
+  -v4, --v4     Package the latest tag of 4.0release branch, such as v4.0.23.
+  --git         The SRS git source directory to fetch the latest tag. Default: $HOME/git/srs
+  --tag         The tag to build the docker. Retrieve from branch.
+  --any-branch  Don't check branch, allow any branch to create tag.
+END
+    exit 0
 fi
 
-if [[ "v${SRS_BRANCH}" != "${SRS_FILTER}.0release" ]]; then
-  echo "Invalid branch $SRS_BRANCH in $SRS_GIT for release $SRS_FILTER"
-  exit -1
+if [[ $CHECK_BRANCH == YES ]]; then
+  SRS_BRANCH=`(cd $SRS_GIT && git branch|grep \*|awk '{print $2}')`
+  if [[ $? -ne 0 ]]; then
+    echo "Invalid branch in $SRS_GIT"
+    exit -1
+  fi
+
+  if [[ "v${SRS_BRANCH}" != "${SRS_FILTER}.0release" ]]; then
+    echo "Invalid branch $SRS_BRANCH in $SRS_GIT for release $SRS_FILTER"
+    exit -1
+  fi
 fi
 
 if [[ -z $SRS_TAG ]]; then
@@ -97,19 +118,6 @@ SRS_MAJOR=`echo $SRS_TAG|sed 's/^v//g'|awk -F '.' '{print $1}' 2>&1`
 if [[ $? -ne 0 ]]; then
   echo "Invalid major version $SRS_MAJOR"
   exit -1
-fi
-
-if [[ $help == yes ]]; then
-    cat << END
-
-  -h, --help    Print this message
-
-  -v2, --v2     Package the latest tag of 2.0release branch, such as v2.0-r7.
-  -v3, --v3     Package the latest tag of 3.0release branch, such as v3.0-a2.
-  --git         The SRS git source directory to fetch the latest tag. Default: $HOME/git/srs
-  --tag         The tag to build the docker. Retrieve from branch.
-END
-    exit 0
 fi
 
 # If v3.0-b0, it's not temporary release.
