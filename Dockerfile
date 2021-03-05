@@ -1,6 +1,6 @@
 # https://docs.docker.com/engine/reference/builder/#arg
 # @remark Please never modify it, the auto/release.sh will update it automatically.
-ARG tag=v3.0-r3
+ARG tag=v2.0-r8
 ARG url=https://gitee.com/winlinvip/srs.oschina.git
 
 ############################################################
@@ -18,7 +18,6 @@ RUN cd /tmp/srs/trunk && ./configure && make && make install
 COPY conf /usr/local/srs/conf
 # The default index.html and srs-console.
 COPY index.html /usr/local/srs/objs/nginx/html/index.html
-COPY favicon.ico /usr/local/srs/objs/nginx/html/favicon.ico
 COPY srs-console/trunk/research/console /usr/local/srs/objs/nginx/html/console
 COPY srs.release/trunk/research/players /usr/local/srs/objs/nginx/html/players
 
