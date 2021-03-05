@@ -4,6 +4,11 @@
 #------------------------------------------------------------------------------------
 FROM centos:6 as build
 
+# To enable yum for CentOS6
+ADD etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo
+ADD etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo
+RUN yum makecache
+
 RUN yum install -y gcc gcc-c++ make patch sudo unzip perl zlib automake libtool \
     zlib-devel bzip2 bzip2-devel libxml2-devel
 
@@ -59,6 +64,11 @@ WORKDIR /tmp/srs
 # FFmpeg.
 COPY --from=build /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=build /usr/local/ssl /usr/local/ssl
+
+# To enable yum for CentOS6
+ADD etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo
+ADD etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo
+RUN yum makecache
 
 # Note that git is very important for codecov to discover the .codecov.yml
 RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unzip zip git \
