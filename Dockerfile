@@ -1,12 +1,12 @@
 # https://docs.docker.com/engine/reference/builder/#arg
 # @remark Please never modify it, the auto/release.sh will update it automatically.
-ARG tag=v2.0-r7
-ARG url=https://gitee.com/winlinvip/srs.oschina.git
+ARG tag=v2.0-r8
+ARG url=https://github.com/ossrs/srs.git
 
 ############################################################
 # build
 ############################################################
-ARG repo=registry.cn-hangzhou.aliyuncs.com/ossrs/srs:dev
+ARG repo=ossrs/srs:dev
 FROM ${repo} AS build
 ARG tag
 ARG url
