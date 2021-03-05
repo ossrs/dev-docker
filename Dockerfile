@@ -2,7 +2,7 @@
 #------------------------------------------------------------------------------------
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
-FROM centos:7 as build
+FROM centos:8 as build
 
 RUN yum install -y gcc gcc-c++ make patch sudo unzip perl zlib automake libtool \
     zlib-devel bzip2 bzip2-devel libxml2-devel
@@ -27,14 +27,14 @@ RUN cd /tmp/openssl-1.1.1j && \
 # For FFMPEG
 ADD nasm-2.14.tar.bz2 /tmp
 ADD yasm-1.2.0.tar.bz2 /tmp
-ADD fdk-aac-0.1.3.tar.bz2 /tmp
+ADD fdk-aac-0.1.6.tar.gz /tmp
 ADD lame-3.99.5.tar.bz2 /tmp
 ADD speex-1.2rc1.tar.bz2 /tmp
 ADD x264-snapshot-20181116-2245.tar.bz2 /tmp
 ADD ffmpeg-4.2.1.tar.bz2 /tmp
 RUN cd /tmp/nasm-2.14 && ./configure && make && make install && \
     cd /tmp/yasm-1.2.0 && ./configure && make && make install && \
-    cd /tmp/fdk-aac-0.1.3 && bash autogen.sh && ./configure && make && make install && \
+    cd /tmp/fdk-aac-0.1.6 && bash autogen.sh && ./configure && make && make install && \
     cd /tmp/lame-3.99.5 && ./configure && make && make install && \
     cd /tmp/speex-1.2rc1 && ./configure && make && make install && \
     cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-cli --enable-static && make && make install
@@ -52,7 +52,7 @@ RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
 #------------------------------------------------------------------------------------
-FROM centos:7 as dist
+FROM centos:8 as dist
 
 WORKDIR /tmp/srs
 
@@ -62,14 +62,14 @@ COPY --from=build /usr/local/ssl /usr/local/ssl
 
 # Note that git is very important for codecov to discover the .codecov.yml
 RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unzip zip git \
-    nasm perf strace sysstat ethtool libtool
+    nasm perf strace sysstat ethtool libtool python2
 
 # For GCP/pprof/gperf, see https://winlin.blog.csdn.net/article/details/53503869
 RUN yum install -y graphviz
 
 # Install cherrypy for HTTP hooks.
 ADD CherryPy-3.2.4.tar.gz2 /tmp
-RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
+RUN RUN cd /tmp/CherryPy-3.2.4 && python2 setup.py install
 
 ENV PATH $PATH:/usr/local/go/bin
 RUN cd /usr/local && \
