@@ -4,6 +4,7 @@ SRS_FILTER=`git branch|grep \*|awk '{print $2}'`
 SRS_GIT=$HOME/git/srs
 SRS_TAG=
 SRS_MAJOR=
+SRS_LATEST=YES
 
 # linux shell color support.
 RED="\\033[31m"
@@ -51,6 +52,7 @@ do
         --v3)                           SRS_FILTER=v3             ;;
         --git)                          SRS_GIT=$value            ;;
         --tag)                          SRS_TAG=$value            ;;
+        --latest)                       SRS_LATEST=$value         ;;
 
         *)
             echo "$0: error: invalid option \"$option\", @see $0 --help"
@@ -195,7 +197,7 @@ git tag release-v$SRS_MAJOR; git push -f aliyun release-v$SRS_MAJOR
 echo "Create new tag $SRS_MAJOR for aliyun"
 echo ""
 
-if [[ $SRS_MAJOR == 3 ]]; then
+if [[ $SRS_MAJOR == 3 && $SRS_LATEST == YES ]]; then
   NICE "aliyun hub release-vlatest"
   git tag -d release-vlatest 2>/dev/null
   echo "Cleanup tag latest for aliyun"
