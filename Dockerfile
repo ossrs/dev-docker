@@ -73,7 +73,7 @@ RUN yum install -y graphviz
 
 # Install cherrypy for HTTP hooks.
 ADD CherryPy-3.2.4.tar.gz2 /tmp
-RUN RUN cd /tmp/CherryPy-3.2.4 && python2 setup.py install
+RUN cd /tmp/CherryPy-3.2.4 && python2 setup.py install
 
 ENV PATH $PATH:/usr/local/go/bin
 RUN cd /usr/local && \
