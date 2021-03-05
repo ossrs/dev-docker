@@ -2,10 +2,15 @@
 #------------------------------------------------------------------------------------
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
-FROM centos:7 as build
+FROM ubuntu:xenial as build
 
-RUN yum install -y gcc gcc-c++ make patch sudo unzip perl zlib automake libtool \
-    zlib-devel bzip2 bzip2-devel libxml2-devel
+# https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update && \
+    apt-get install -y aptitude gcc g++ make patch unzip python \
+        autoconf automake libtool pkg-config libxml2-dev zlib1g-dev \
+        liblzma-dev libzip-dev libbz2-dev
 
 # Libs path for app which depends on ssl, such as libsrt.
 ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/ssl/lib/pkgconfig
@@ -52,20 +57,20 @@ RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
 #------------------------------------------------------------------------------------
-FROM centos:7 as dist
+FROM ubuntu:xenial as dist
 
 WORKDIR /tmp/srs
 
-# FFmpeg.
 COPY --from=build /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=build /usr/local/ssl /usr/local/ssl
 
-# Note that git is very important for codecov to discover the .codecov.yml
-RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unzip zip git \
-    nasm perf strace sysstat ethtool libtool
+# https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
+ENV DEBIAN_FRONTEND noninteractive
 
-# For GCP/pprof/gperf, see https://winlin.blog.csdn.net/article/details/53503869
-RUN yum install -y graphviz
+# Note that git is very important for codecov to discover the .codecov.yml
+RUN apt-get update && \
+    apt-get install -y aptitude gdb gcc g++ make patch unzip python \
+        autoconf automake libtool pkg-config libxml2-dev liblzma-dev curl net-tools
 
 # Install cherrypy for HTTP hooks.
 ADD CherryPy-3.2.4.tar.gz2 /tmp
@@ -80,4 +85,3 @@ RUN cd /usr/local && \
 # For utest, the gtest.
 ADD googletest-release-1.6.0.tar.gz /usr/local
 RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
-
