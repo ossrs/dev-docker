@@ -53,7 +53,8 @@ docker run -p 1935:1935 -p 1985:1985 -p 8080:8080 -p 8085:8085 \
 ```
 cd ~/git/srs/trunk &&
 docker run -p 1935:1935 -p 1985:1985 -p 8080:8080 -p 8085:8085 \
-     --privileged -it --rm -v `pwd`:/srs -w /srs ossrs/srs:dev \
+    --env CANDIDATE=$(ifconfig en0 inet| grep 'inet '|awk '{print $2}') -p 8000:8000/udp \
+    --privileged -it --rm -v `pwd`:/srs -w /srs ossrs/srs:dev \
     gdb --args ./objs/srs -c conf/console.conf
 ```
 
