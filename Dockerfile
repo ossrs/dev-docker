@@ -60,6 +60,10 @@ WORKDIR /tmp/srs
 COPY --from=build /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=build /usr/local/ssl /usr/local/ssl
 
+# To enable yum for CentOS6
+ADD etc/yum.repos.d/nasm.repo /etc/yum.repos.d/nasm.repo
+RUN yum makecache
+
 # Note that git is very important for codecov to discover the .codecov.yml
 RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unzip zip git \
     nasm perf strace sysstat ethtool libtool python2
