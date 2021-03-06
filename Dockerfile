@@ -13,5 +13,9 @@ RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unz
 # Clone the latest code.
 RUN cd / && git clone --branch develop ${url} srs
 
+# Build SRS develop version.
+RUN cd /srs/trunk && ./configure && make
+
+# Only show SRS version.
 WORKDIR /srs/trunk
-CMD ["bash", "-c", "ls -lh && pwd"]
+CMD ["bash", "-c", "ls -lh && pwd && ./objs/srs -v"]
