@@ -7,7 +7,7 @@
 
 ## Usage
 
-从[这里](https://www.docker.com/products/docker-desktop)下载Docker，然后安装。
+安装Docker，从[这里](https://www.docker.com/products/docker-desktop)下载和安装。
 
 获取`ossrs/srs:study`镜像：
 
