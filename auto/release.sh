@@ -1,30 +1,7 @@
 #!/bin/bash
 
-# linux shell color support.
-RED="\\033[31m"
-GREEN="\\033[32m"
-YELLOW="\\033[33m"
-BLACK="\\033[0m"
-
-function NICE() {
-    echo -e "${GREEN}$@${BLACK}"
-}
-
-function TRACE() {
-    echo -e "${BLACK}$@${BLACK}"
-}
-
-function WARN() {
-    echo -e "${YELLOW}$@${BLACK}"
-}
-
-function ERROR() {
-    echo -e "${RED}$@${BLACK}"
-}
-
-##################################################################################
-##################################################################################
-##################################################################################
+echo "Push code"
+git push && git push aliyun
 
 OS=`python -mplatform 2>&1`
 MACOS=NO && CENTOS=NO && UBUNTU=NO && CENTOS7=NO
