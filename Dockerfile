@@ -17,11 +17,11 @@ RUN cd /tmp/srs/trunk && ./configure && make && make install
 # All config files for SRS.
 COPY conf /usr/local/srs/conf
 # The default index.html and srs-console.
-COPY /tmp/srs/trunk/research/api-server/static-dir/index.html /usr/local/srs/objs/nginx/html/
-COPY /tmp/srs/trunk/research/api-server/static-dir/favicon.ico /usr/local/srs/objs/nginx/html/
-COPY /tmp/srs/trunk/research/api-server/static-dir/crossdomain.xml /usr/local/srs/objs/nginx/html/
-COPY /tmp/srs/trunk/research/console /usr/local/srs/objs/nginx/html/
-COPY /tmp/srs/trunk/research/players /usr/local/srs/objs/nginx/html/
+RUN cp /tmp/srs/trunk/research/api-server/static-dir/index.html /usr/local/srs/objs/nginx/html/
+RUN cp /tmp/srs/trunk/research/api-server/static-dir/favicon.ico /usr/local/srs/objs/nginx/html/
+RUN cp /tmp/srs/trunk/research/api-server/static-dir/crossdomain.xml /usr/local/srs/objs/nginx/html/
+RUN cp -R /tmp/srs/trunk/research/console /usr/local/srs/objs/nginx/html/
+RUN cp -R /tmp/srs/trunk/research/players /usr/local/srs/objs/nginx/html/
 
 ############################################################
 # dist
