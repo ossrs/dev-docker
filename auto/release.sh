@@ -164,7 +164,7 @@ echo ""
 # For aliyun hub.
 NICE "aliyun hub release-v$SRS_TAG"
 
-SRS_GITEE=https://gitee.com/winlinvip/srs.oschina.git
+SRS_GITEE=https://gitee.com/ossrs/srs.git
 if [[ $MACOS == YES ]]; then
   sed -i '' "s|^ARG url=.*$|ARG url=${SRS_GITEE}|g" Dockerfile
   sed -i '' "s|^ARG repo=.*$|ARG repo=registry.cn-hangzhou.aliyuncs.com/ossrs/srs:dev|g" Dockerfile
