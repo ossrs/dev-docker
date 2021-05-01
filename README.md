@@ -15,7 +15,7 @@ Download docker from [here](https://www.docker.com/products/docker-desktop) then
 
 ```
 cd ~/git &&
-git clone https://gitee.com/winlinvip/srs.oschina.git srs && cd srs/trunk && 
+git clone https://gitee.com/ossrs/srs.git srs && cd srs/trunk && 
 git remote set-url origin https://github.com/ossrs/srs.git && git pull
 ```
 
@@ -47,6 +47,8 @@ docker run -p 1935:1935 -p 1985:1985 -p 8080:8080 -p 8085:8085 \
      -it --rm -v `pwd`:/srs -w /srs ossrs/srs:dev \
     ./objs/srs -c conf/console.conf
 ```
+
+> For WebRTC, user MUST specify the ip by env `CANDIDATE`, please read [Config: Candidate](https://github.com/ossrs/srs/wiki/v4_CN_WebRTC#config-candidate).
 
 **Debug SRS by GDB in dev docker**
 
