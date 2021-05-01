@@ -32,7 +32,7 @@ docker run --rm -p 1935:1935 -p 1985:1985 -p 8080:8080 \
     ossrs/srs:v4.0.76
 ```
 
-> For WebRTC, user MUST specify the ip by env `CANDIDATE`, please read [Config: Candidate](https://github.com/ossrs/srs/wiki/v4_CN_RTCWiki#config-candidate).
+> For WebRTC, user MUST specify the ip by env `CANDIDATE`, please read [Config: Candidate](https://github.com/ossrs/srs/wiki/v4_CN_WebRTC#config-candidate).
 
 If it works, open [http://localhost:8080/](http://localhost:8080/) to check it, then publish
 [stream](https://github.com/ossrs/srs/blob/3.0release/trunk/doc/source.200kbps.768x320.flv) by:
