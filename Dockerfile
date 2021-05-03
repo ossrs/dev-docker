@@ -22,6 +22,7 @@ RUN cp /tmp/srs/trunk/research/api-server/static-dir/favicon.ico /usr/local/srs/
 RUN cp /tmp/srs/trunk/research/api-server/static-dir/crossdomain.xml /usr/local/srs/objs/nginx/html/
 RUN cp -R /tmp/srs/trunk/research/console /usr/local/srs/objs/nginx/html/
 RUN cp -R /tmp/srs/trunk/research/players /usr/local/srs/objs/nginx/html/
+RUN cp -R /tmp/srs/trunk/3rdparty/signaling/www/demos /usr/local/srs/objs/nginx/html/
 
 ############################################################
 # dist
