@@ -57,8 +57,10 @@ FROM centos:7 as dist
 
 WORKDIR /tmp/srs
 
+# FFmpeg.
 COPY --from=build /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=build /usr/local/ssl /usr/local/ssl
+# For libsrt
 COPY --from=build /usr/local/include/srt /usr/local/include/srt
 COPY --from=build /usr/local/lib64 /usr/local/lib64
 
