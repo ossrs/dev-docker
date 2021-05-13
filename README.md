@@ -3,7 +3,7 @@
 ![](http://ossrs.net:8000/gif/v1/sls.gif?site=github.com&path=/docker/encoder)
 [![](https://cloud.githubusercontent.com/assets/2777660/22814959/c51cbe72-ef92-11e6-81cc-32b657b285d5.png)](https://github.com/ossrs/srs/wiki/v1_CN_Contact#wechat)
 
-This is a encoder docker, to publish a RTMP stream to `rtmp://localhost/live/livestream`.
+This is a encoder(CentOS7) docker, to publish a RTMP stream to `rtmp://localhost/live/livestream`.
 
 ## Usage
 
