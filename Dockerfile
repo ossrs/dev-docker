@@ -44,7 +44,7 @@ RUN cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-cli --disable-s
 ADD srt-1.4.1.tar.gz /tmp
 RUN cd /tmp/srt-1.4.1 && ./configure --disable-shared --enable-static && make && make install
 
-# Remark, FFMPEG should always use libsrt.so, never use libsrt.a, or it'll failed.
+# Build FFmpeg, static link libraries.
 ADD ffmpeg-4.2.1.tar.bz2 /tmp
 RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread \
         --enable-gpl --enable-nonfree \
