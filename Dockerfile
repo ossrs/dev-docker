@@ -27,21 +27,25 @@ RUN cd /tmp/openssl-1.1.1j && \
 
 # For FFMPEG
 ADD nasm-2.14.tar.bz2 /tmp
+RUN cd /tmp/nasm-2.14 && ./configure && make && make install
+# For aac
 ADD fdk-aac-0.1.6.tar.gz /tmp
+RUN cd /tmp/fdk-aac-0.1.6 && bash autogen.sh && ./configure --disable-shared && make && make install
+# For mp3
 ADD lame-3.99.5.tar.bz2 /tmp
+RUN cd /tmp/lame-3.99.5 && ./configure --disable-shared && make && make install
+# For libspeex
 ADD speex-1.2rc1.tar.bz2 /tmp
+RUN cd /tmp/speex-1.2rc1 && ./configure --disable-shared && make && make install
+# For libx264
 ADD x264-snapshot-20181116-2245.tar.bz2 /tmp
-ADD ffmpeg-4.2.1.tar.bz2 /tmp
+RUN cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-cli --disable-shared --enable-static && make && make install
 # The libsrt for SRS, which depends on openssl.
 ADD srt-1.4.1.tar.gz /tmp
-RUN cd /tmp/nasm-2.14 && ./configure && make && make install && \
-    cd /tmp/fdk-aac-0.1.6 && bash autogen.sh && ./configure --disable-shared && make && make install && \
-    cd /tmp/lame-3.99.5 && ./configure --disable-shared && make && make install && \
-    cd /tmp/speex-1.2rc1 && ./configure --disable-shared && make && make install && \
-    cd /tmp/srt-1.4.1 && ./configure --disable-shared --enable-static && make && make install && \
-    cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-cli --disable-shared --enable-static && make && make install
+RUN cd /tmp/srt-1.4.1 && ./configure --disable-shared --enable-static && make && make install
 
 # Remark, FFMPEG should always use libsrt.so, never use libsrt.a, or it'll failed.
+ADD ffmpeg-4.2.1.tar.bz2 /tmp
 RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread \
         --enable-gpl --enable-nonfree \
         --enable-postproc --enable-bzlib --enable-zlib \
