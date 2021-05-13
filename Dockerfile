@@ -12,6 +12,10 @@ COPY doc /usr/local/srs/doc
 FROM centos:7 AS dist
 # FFMPEG 4.1
 COPY --from=build /usr/local/bin/ffmpeg /usr/local/srs/objs/ffmpeg/bin/ffmpeg
+COPY --from=build /usr/local/ssl /usr/local/ssl
+# For libsrt
+COPY --from=build /usr/local/include/srt /usr/local/include/srt
+COPY --from=build /usr/local/lib64 /usr/local/lib64
 # FLV demo file.
 COPY --from=build /usr/local/srs/doc /usr/local/srs/doc
 # Default workdir and command.
