@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-git tag -d release-vdev
-git tag release-vdev
-git push origin -f release-vdev
-git push aliyun -f release-vdev
+git tag -d release-vsrt
+git tag release-vsrt
+git push origin -f release-vsrt
+git push aliyun -f release-vsrt
