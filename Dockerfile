@@ -22,7 +22,7 @@ ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/lib/pkgconfig:/usr/local/lib64/p
 # Openssl 1.1.* for SRS.
 ADD openssl-1.1.1j.tar.bz2 /tmp
 RUN cd /tmp/openssl-1.1.1j && \
-   ./config -shared -no-threads --prefix=/usr/local/ssl && make && make install_sw
+   ./config -no-shared -no-threads --prefix=/usr/local/ssl && make && make install_sw
 
 # Openssl 1.0.* for SRS.
 #ADD openssl-OpenSSL_1_0_2u.tar.gz /tmp
@@ -34,7 +34,7 @@ ADD nasm-2.14.tar.bz2 /tmp
 RUN cd /tmp/nasm-2.14 && ./configure && make && make install
 
 ADD fdk-aac-0.1.3.tar.bz2 /tmp
-RUN cd /tmp/fdk-aac-0.1.3 && bash autogen.sh && ./configure --disable-shared && make && make install
+RUN cd /tmp/fdk-aac-0.1.3 && bash autogen.sh && CXXFLAGS=-Wno-narrowing ./configure --disable-shared && make && make install
 
 ADD lame-3.99.5.tar.bz2 /tmp
 RUN cd /tmp/lame-3.99.5 && ./configure --disable-shared && make && make install
