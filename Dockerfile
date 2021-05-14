@@ -22,7 +22,7 @@ ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/lib/pkgconfig:/usr/local/lib64/p
 # Openssl 1.1.* for SRS.
 ADD openssl-1.1.1j.tar.bz2 /tmp
 RUN cd /tmp/openssl-1.1.1j && \
-   ./config -shared -no-threads --prefix=/usr/local/ssl && make && make install_sw
+   ./config -no-shared -no-threads --prefix=/usr/local/ssl && make && make install_sw
 
 # Openssl 1.0.* for SRS.
 #ADD openssl-OpenSSL_1_0_2u.tar.gz /tmp
@@ -46,7 +46,7 @@ ADD x264-snapshot-20181116-2245.tar.bz2 /tmp
 RUN cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-shared --disable-cli --enable-static && make && make install
 
 ADD srt-1.4.1.tar.gz /tmp
-RUN cd /tmp/srt-1.4.1 && pwd && ls -lrhat && ./configure --disable-shared --enable-static && make && make install
+RUN cd /tmp/srt-1.4.1 && pwd && ls -lrhat && ./configure --disable-shared --enable-static --disable-app --disable-c++11 && make && make install
 
 ADD ffmpeg-4.2.1.tar.bz2 /tmp
 RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread \
