@@ -74,7 +74,8 @@ RUN yum makecache
 
 # Note that git is very important for codecov to discover the .codecov.yml
 RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unzip zip git \
-    nasm perf strace sysstat ethtool libtool python2
+    nasm perf strace sysstat ethtool libtool python2 \
+    tcl cmake
 
 # For GCP/pprof/gperf, see https://winlin.blog.csdn.net/article/details/53503869
 RUN yum install -y graphviz
