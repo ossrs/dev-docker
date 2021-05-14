@@ -73,7 +73,8 @@ ENV DEBIAN_FRONTEND noninteractive
 # Note that git is very important for codecov to discover the .codecov.yml
 RUN apt-get update && \
     apt-get install -y aptitude gdb gcc g++ make patch unzip python \
-        autoconf automake libtool pkg-config libxml2-dev liblzma-dev curl net-tools
+        autoconf automake libtool pkg-config libxml2-dev liblzma-dev curl net-tools \
+        tcl cmake
 
 # Install cherrypy for HTTP hooks.
 ADD CherryPy-3.2.4.tar.gz2 /tmp
