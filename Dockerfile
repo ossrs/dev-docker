@@ -43,10 +43,10 @@ ADD speex-1.2rc1.tar.bz2 /tmp
 RUN cd /tmp/speex-1.2rc1 && ./configure --disable-shared && make && make install
 
 ADD x264-snapshot-20181116-2245.tar.bz2 /tmp
-RUN cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-shared --disable-cli --enable-static && make && make install
+RUN cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-shared --disable-cli --enable-static --enable-pic && make && make install
 
 ADD srt-1.4.1.tar.gz /tmp
-RUN cd /tmp/srt-1.4.1 && pwd && ls -lrhat && ./configure --disable-shared --enable-static && make && make install
+RUN cd /tmp/srt-1.4.1 && pwd && ls -lrhat && ./configure --disable-shared --enable-static --disable-app --disable-c++11 && make && make install
 
 ADD ffmpeg-4.2.1.tar.bz2 /tmp
 RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread \
