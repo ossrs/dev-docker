@@ -69,9 +69,6 @@ WORKDIR /tmp/srs
 
 COPY --from=build /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=build /usr/local/ssl /usr/local/ssl
-# For libsrt
-COPY --from=build /usr/local/include/srt /usr/local/include/srt
-COPY --from=build /usr/local/lib64 /usr/local/lib64
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
