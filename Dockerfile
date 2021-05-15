@@ -10,7 +10,8 @@ ADD etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo
 RUN yum makecache
 
 RUN yum install -y gcc gcc-c++ make patch sudo unzip perl zlib automake libtool \
-    zlib-devel bzip2 bzip2-devel libxml2-devel
+    zlib-devel bzip2 bzip2-devel libxml2-devel \
+    tcl cmake
 
 # Libs path for app which depends on ssl, such as libsrt.
 ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/ssl/lib/pkgconfig
@@ -44,16 +45,18 @@ RUN cd /tmp/speex-1.2rc1 && ./configure --disable-shared && make && make install
 # For libx264
 ADD x264-snapshot-20181116-2245.tar.bz2 /tmp
 RUN cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-cli --disable-shared --enable-static && make && make install
+# The libsrt for SRS, which depends on openssl.
+ADD srt-1.4.1.tar.gz /tmp
+RUN cd /tmp/srt-1.4.1 && pwd && ls -lrhat && ./configure --disable-shared --enable-static --disable-app --disable-c++11 && make && make install
 
 # Build FFmpeg, static link libraries.
-# @remark CentOS 6 does not support libsrt, which requires c++11.
 ADD ffmpeg-4.2.1.tar.bz2 /tmp
 RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread \
         --enable-gpl --enable-nonfree \
         --enable-postproc --enable-bzlib --enable-zlib \
         --enable-libx264 --enable-libmp3lame --enable-libfdk-aac --enable-libspeex \
         --enable-libxml2 --enable-demuxer=dash \
-        --pkg-config-flags='--static' && \
+        --enable-libsrt --pkg-config-flags='--static' && \
 	make && make install && echo "FFMPEG build and install successfully"
 
 #------------------------------------------------------------------------------------
@@ -66,6 +69,9 @@ WORKDIR /tmp/srs
 # FFmpeg.
 COPY --from=build /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=build /usr/local/ssl /usr/local/ssl
+# For libsrt
+COPY --from=build /usr/local/include/srt /usr/local/include/srt
+COPY --from=build /usr/local/lib64 /usr/local/lib64
 
 # To enable yum for CentOS6
 ADD etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo
@@ -74,7 +80,8 @@ RUN yum makecache
 
 # Note that git is very important for codecov to discover the .codecov.yml
 RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unzip zip git \
-    nasm perf strace sysstat ethtool libtool
+    nasm perf strace sysstat ethtool libtool \
+    tcl cmake
 
 # For GCP/pprof/gperf, see https://winlin.blog.csdn.net/article/details/53503869
 RUN yum install -y graphviz
