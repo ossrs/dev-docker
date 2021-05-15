@@ -27,7 +27,7 @@ RUN cd /tmp/openssl-1.1.1j && \
 # Openssl 1.0.* for SRS.
 #ADD openssl-OpenSSL_1_0_2u.tar.gz /tmp
 #RUN cd /tmp/openssl-OpenSSL_1_0_2u && \
-#    ./config -shared -no-threads --prefix=/usr/local/ssl && make && make install_sw
+#    ./config -no-shared -no-threads --prefix=/usr/local/ssl && make && make install_sw
 
 # For FFMPEG
 ADD nasm-2.14.tar.bz2 /tmp
