@@ -32,22 +32,23 @@ RUN cd /tmp/openssl-1.1.1j && \
 # For FFMPEG
 ADD nasm-2.14.tar.bz2 /tmp
 RUN cd /tmp/nasm-2.14 && ./configure && make && make install
-
+# For aac
 ADD fdk-aac-0.1.3.tar.bz2 /tmp
 RUN cd /tmp/fdk-aac-0.1.3 && bash autogen.sh && CXXFLAGS=-Wno-narrowing ./configure --disable-shared && make && make install
-
+# For mp3
 ADD lame-3.99.5.tar.bz2 /tmp
 RUN cd /tmp/lame-3.99.5 && ./configure --disable-shared && make && make install
-
+# For libspeex
 ADD speex-1.2rc1.tar.bz2 /tmp
 RUN cd /tmp/speex-1.2rc1 && ./configure --disable-shared && make && make install
-
+# For libx264
 ADD x264-snapshot-20181116-2245.tar.bz2 /tmp
 RUN cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-shared --disable-cli --enable-static --enable-pic && make && make install
-
+# The libsrt for SRS, which depends on openssl.
 ADD srt-1.4.1.tar.gz /tmp
 RUN cd /tmp/srt-1.4.1 && pwd && ls -lrhat && ./configure --disable-shared --enable-static --disable-app --disable-c++11 && make && make install
 
+# Build FFmpeg, static link libraries.
 ADD ffmpeg-4.2.1.tar.bz2 /tmp
 RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread \
         --enable-gpl --enable-nonfree \
@@ -66,6 +67,9 @@ WORKDIR /tmp/srs
 
 COPY --from=build /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=build /usr/local/ssl /usr/local/ssl
+# For libsrt
+COPY --from=build /usr/local/include/srt /usr/local/include/srt
+COPY --from=build /usr/local/lib64 /usr/local/lib64
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
