@@ -5,34 +5,8 @@
 
 The srt(CentOS7) docker for [SRS](https://github.com/ossrs/srs) developer.
 
-## Usage
+Please use [ossrs/srs:dev](https://github.com/ossrs/srs-docker/tree/dev) instead.
 
-**>>> Install docker**
-
-Download docker from [here](https://www.docker.com/products/docker-desktop) then start docker.
-
-**>>> Clone SRS**
-
-```
-cd ~/git &&
-git clone https://gitee.com/ossrs/srs.git srs && cd srs/trunk && 
-git remote set-url origin https://github.com/ossrs/srs.git && git pull
-```
-
-> Note: Please read https://github.com/ossrs/srs#usage
-
-**>>> Build SRS in dev docker**
-
-```
-cd ~/git/srs/trunk &&
-docker run -it --rm -v `pwd`:/srs -w /srs ossrs/srs:srt \
-    bash -c "./configure --srt=on && make"
-```
-
-After build, the binary file `./objs/srs` is generated.
-
-> Remark: Recomment to use [registry.cn-hangzhou.aliyuncs.com/ossrs/srs:srt](https://cr.console.aliyun.com/repository/cn-hangzhou/ossrs/srs/images) to speed-up.
-
-**>>> Run SRS, read [#1147](https://github.com/ossrs/srs/issues/1147#issuecomment-577951899)**
+请直接使用镜像[ossrs/srs:dev](https://github.com/ossrs/srs-docker/tree/dev)。
 
 Winlin, 2021.03
