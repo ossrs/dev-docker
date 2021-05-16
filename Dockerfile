@@ -13,7 +13,7 @@ ARG url
 # Install required tools.
 RUN yum install -y gcc make gcc-c++ patch unzip perl git
 RUN cd /tmp && git clone --depth=1 --branch ${tag} ${url} srs
-RUN cd /tmp/srs/trunk && ./configure && make && make install
+RUN cd /tmp/srs/trunk && ./configure --srt=on && make && make install
 # All config files for SRS.
 COPY conf /usr/local/srs/conf
 # The default index.html and srs-console.
