@@ -8,7 +8,6 @@ The v4(CentOS7) docker images for [SRS](https://github.com/ossrs/srs).
 > SRS 4.0 is not released yet, so it's develop version and not stable.
 
 <a name="srs4"></a>
-<a name="usage"></a>
 ## Usage: Live Streaming only
 
 Run SRS in docker by(images is [here](https://hub.docker.com/r/ossrs/srs/tags) or [there](https://cr.console.aliyun.com/repository/cn-hangzhou/ossrs/srs/images)):
@@ -36,6 +35,7 @@ Play the following streams by players:
 
 > The online demos and players are available on [ossrs.net](https://ossrs.net).
 
+<a name="usage"></a>
 ## Usage: WebRTC for macOS
 
 Run SRS in docker by(images is [here](https://hub.docker.com/r/ossrs/srs/tags) or [there](https://cr.console.aliyun.com/repository/cn-hangzhou/ossrs/srs/images)):
