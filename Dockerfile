@@ -9,7 +9,7 @@ FROM aarch64/ubuntu:xenial as build
 ENV DEBIAN_FRONTEND noninteractive
 
 # Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
-ADD sources.list /etc/apt/sources.list
+#ADD sources.list /etc/apt/sources.list
 RUN apt-get update
 
 RUN apt-get install -y aptitude gcc g++ make patch unzip python \
