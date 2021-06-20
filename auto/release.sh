@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-git tag -d release-vubuntu20
-git tag release-vubuntu20
-git push origin -f release-vubuntu20
-git push aliyun -f release-vubuntu20
+git tag -d release-vaarch64
+git tag release-vaarch64
+git push origin -f release-vaarch64
+git push aliyun -f release-vaarch64
