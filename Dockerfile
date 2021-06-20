@@ -6,7 +6,7 @@
 FROM aarch64/ubuntu:xenial as build
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
-#ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND noninteractive
 
 # Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
 ADD sources.list /etc/apt/sources.list
@@ -37,8 +37,8 @@ RUN cd /tmp/openssl-1.1.1j && \
 ADD nasm-2.14.tar.bz2 /tmp
 RUN cd /tmp/nasm-2.14 && ./configure && make && make install
 # For aac
-ADD fdk-aac-0.1.3.tar.bz2 /tmp
-RUN cd /tmp/fdk-aac-0.1.3 && bash autogen.sh && CXXFLAGS=-Wno-narrowing ./configure --disable-shared && make && make install
+ADD fdk-aac-0.1.6.tar.gz /tmp
+RUN cd /tmp/fdk-aac-0.1.6 && bash autogen.sh && CXXFLAGS=-Wno-narrowing ./configure --disable-shared && make && make install
 # For mp3
 ADD lame-3.99.5.tar.bz2 /tmp
 RUN cd /tmp/lame-3.99.5 && ./configure --disable-shared && make && make install
@@ -81,8 +81,7 @@ ADD sources.list /etc/apt/sources.list
 RUN apt-get update
 
 # Note that git is very important for codecov to discover the .codecov.yml
-RUN apt-get update && \
-    apt-get install -y aptitude gdb gcc g++ make patch unzip python \
+RUN apt-get install -y aptitude gdb gcc g++ make patch unzip python \
         autoconf automake libtool pkg-config libxml2-dev liblzma-dev curl net-tools \
         tcl cmake
 
