@@ -102,5 +102,6 @@ ADD googletest-release-1.6.0.tar.gz /usr/local
 RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
 
 # For cross-build: https://github.com/ossrs/srs/wiki/v4_EN_SrsLinuxArm#ubuntu-cross-build-srs
-RUN apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+RUN apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+    gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
