@@ -2,8 +2,8 @@
 #------------------------------------------------------------------------------------
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
-# http://releases.ubuntu.com/focal/
-FROM ubuntu:focal as build
+# https://hub.docker.com/r/aarch64/ubuntu
+FROM aarch64/ubuntu:xenial as build
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
@@ -66,8 +66,8 @@ RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
 #------------------------------------------------------------------------------------
-# http://releases.ubuntu.com/focal/
-FROM ubuntu:focal as dist
+# https://hub.docker.com/r/aarch64/ubuntu
+FROM aarch64/ubuntu:xenial as dist
 
 WORKDIR /tmp/srs
 
@@ -100,8 +100,3 @@ RUN cd /usr/local && \
 # For utest, the gtest.
 ADD googletest-release-1.6.0.tar.gz /usr/local
 RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
-
-# For cross-build: https://github.com/ossrs/srs/wiki/v4_EN_SrsLinuxArm#ubuntu-cross-build-srs
-RUN apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
-    gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-
