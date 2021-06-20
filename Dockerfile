@@ -6,10 +6,10 @@
 FROM aarch64/ubuntu:xenial as build
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
-ENV DEBIAN_FRONTEND noninteractive
+#ENV DEBIAN_FRONTEND noninteractive
 
 # Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
-#ADD sources.list /etc/apt/sources.list
+ADD sources.list /etc/apt/sources.list
 RUN apt-get update
 
 RUN apt-get install -y aptitude gcc g++ make patch unzip python \
