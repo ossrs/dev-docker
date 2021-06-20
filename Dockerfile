@@ -12,8 +12,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ADD sources.list /etc/apt/sources.list
 RUN apt-get update
 
-RUN apt-get update && \
-    apt-get install -y aptitude gcc g++ make patch unzip python \
+RUN apt-get install -y aptitude gcc g++ make patch unzip python \
         autoconf automake libtool pkg-config libxml2-dev zlib1g-dev \
         liblzma-dev libzip-dev libbz2-dev tcl cmake
 
