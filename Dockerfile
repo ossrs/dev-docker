@@ -2,13 +2,13 @@
 #------------------------------------------------------------------------------------
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
-# https://hub.docker.com/r/aarch64/ubuntu
-FROM aarch64/ubuntu:xenial as build
+# https://hub.docker.com/r/arm64v8/ubuntu
+FROM arm64v8/ubuntu:bionic as build
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
 
-# Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
+# Update the mirror from aliyun, @see https://blog.csdn.net/c417469898/article/details/106412687
 ADD sources.list /etc/apt/sources.list
 RUN apt-get update
 
@@ -41,10 +41,10 @@ ADD fdk-aac-0.1.6.tar.gz /tmp
 RUN cd /tmp/fdk-aac-0.1.6 && bash autogen.sh && CXXFLAGS=-Wno-narrowing ./configure --disable-shared && make && make install
 # For mp3
 ADD lame-3.99.5.tar.bz2 /tmp
-RUN cd /tmp/lame-3.99.5 && ./configure --disable-shared && make && make install
+RUN cd /tmp/lame-3.99.5 && ./configure --disable-shared --build=arm && make && make install
 # For libspeex
 ADD speex-1.2rc1.tar.bz2 /tmp
-RUN cd /tmp/speex-1.2rc1 && ./configure --disable-shared && make && make install
+RUN cd /tmp/speex-1.2rc1 && ./configure --disable-shared --build=arm && make && make install
 # For libx264
 ADD x264-snapshot-20181116-2245.tar.bz2 /tmp
 RUN cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-shared --disable-cli --enable-static --enable-pic && make && make install
@@ -65,8 +65,8 @@ RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
 #------------------------------------------------------------------------------------
-# https://hub.docker.com/r/aarch64/ubuntu
-FROM aarch64/ubuntu:xenial as dist
+# https://hub.docker.com/r/arm64v8/ubuntu
+FROM arm64v8/ubuntu:bionic as dist
 
 WORKDIR /tmp/srs
 
@@ -76,7 +76,7 @@ COPY --from=build /usr/local/ssl /usr/local/ssl
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
 
-# Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
+# Update the mirror from aliyun, @see https://blog.csdn.net/c417469898/article/details/106412687
 ADD sources.list /etc/apt/sources.list
 RUN apt-get update
 

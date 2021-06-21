@@ -1,16 +1,16 @@
-deb http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial main
-deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial main
+deb http://mirrors.ustc.edu.cn/ubuntu-ports/ bionic main
+deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ bionic main
 
-deb http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-updates main
-deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-updates main
+deb http://mirrors.ustc.edu.cn/ubuntu-ports/ bionic-updates main
+deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ bionic-updates main
 
-deb http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial universe
-deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial universe
-deb http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-updates universe
-deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-updates universe
+deb http://mirrors.ustc.edu.cn/ubuntu-ports/ bionic universe
+deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ bionic universe
+deb http://mirrors.ustc.edu.cn/ubuntu-ports/ bionic-updates universe
+deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ bionic-updates universe
 
-deb http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-security main
-deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-security main
-deb http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-security universe
-deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-security universe
+deb http://mirrors.ustc.edu.cn/ubuntu-ports/ bionic-security main
+deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ bionic-security main
+deb http://mirrors.ustc.edu.cn/ubuntu-ports/ bionic-security universe
+deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ bionic-security universe
 
