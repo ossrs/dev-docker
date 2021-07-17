@@ -190,26 +190,24 @@ echo "Create new tag $SRS_TAG for aliyun"
 echo ""
 
 # For temporary release, we don't update srs:3 or srs:latest
-if [[ $TEMPORARY_RELEASE == YES ]]; then
-  exit 0;
-fi
+if [[ $TEMPORARY_RELEASE != YES ]]; then
+  NICE "aliyun hub release-v$SRS_MAJOR"
 
-NICE "aliyun hub release-v$SRS_MAJOR"
+  git tag -d release-v$SRS_MAJOR 2>/dev/null
+  echo "Cleanup tag $SRS_MAJOR for aliyun"
 
-git tag -d release-v$SRS_MAJOR 2>/dev/null
-echo "Cleanup tag $SRS_MAJOR for aliyun"
+  git tag release-v$SRS_MAJOR; git push -f aliyun release-v$SRS_MAJOR
+  echo "Create new tag $SRS_MAJOR for aliyun"
+  echo ""
 
-git tag release-v$SRS_MAJOR; git push -f aliyun release-v$SRS_MAJOR
-echo "Create new tag $SRS_MAJOR for aliyun"
-echo ""
+  if [[ $SRS_MAJOR == 3 ]]; then
+    NICE "aliyun hub release-vlatest"
+    git tag -d release-vlatest 2>/dev/null
+    echo "Cleanup tag latest for aliyun"
 
-if [[ $SRS_MAJOR == 3 ]]; then
-  NICE "aliyun hub release-vlatest"
-  git tag -d release-vlatest 2>/dev/null
-  echo "Cleanup tag latest for aliyun"
-
-  git tag release-vlatest; git push -f aliyun release-vlatest
-  echo "Create new tag latest for aliyun"
+    git tag release-vlatest; git push -f aliyun release-vlatest
+    echo "Create new tag latest for aliyun"
+  fi
 fi
 
 echo ""
