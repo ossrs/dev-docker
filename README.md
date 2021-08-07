@@ -15,7 +15,7 @@ Run SRS in docker by(images is [here](https://hub.docker.com/r/ossrs/srs/tags) o
 ```bash
 # For live streaming only, without WebRTC.
 docker run --rm -p 1935:1935 -p 1985:1985 -p 8080:8080 \
-    registry.cn-hangzhou.aliyuncs.com/ossrs/srs:v4
+    registry.cn-hangzhou.aliyuncs.com/ossrs/srs:4
 ```
 
 If it works, open [http://localhost:8080/](http://localhost:8080/) to check it, then publish
@@ -44,7 +44,7 @@ Run SRS in docker by(images is [here](https://hub.docker.com/r/ossrs/srs/tags) o
 # For macOS, with WebRTC
 docker run --rm -p 1935:1935 -p 1985:1985 -p 8080:8080 \
     --env CANDIDATE=$(ifconfig en0 inet| grep 'inet '|awk '{print $2}') -p 8000:8000/udp \
-    ossrs/srs:v4
+    ossrs/srs:4
 ```
 
 > For WebRTC, user MUST specify the ip by env `CANDIDATE`, please read [Config: Candidate](https://github.com/ossrs/srs/wiki/v4_CN_WebRTC#config-candidate).
@@ -77,7 +77,7 @@ Run SRS in docker by(images is [here](https://hub.docker.com/r/ossrs/srs/tags) o
 # For CentOS, with WebRTC
 docker run --rm -p 1935:1935 -p 1985:1985 -p 8080:8080 \
     --env CANDIDATE=$(ifconfig eth0|grep 'inet '|awk '{print $2}') -p 8000:8000/udp \
-    ossrs/srs:v4
+    ossrs/srs:4
 ```
 
 > For WebRTC, user MUST specify the ip by env `CANDIDATE`, please read [Config: Candidate](https://github.com/ossrs/srs/wiki/v4_CN_WebRTC#config-candidate).
@@ -112,7 +112,7 @@ To overwrite the config by `/path/of/yours.conf`:
 ```bash
 docker run --rm -p 1935:1935 -p 1985:1985 -p 8080:8080 \
     -v /path/of/yours.conf:/usr/local/srs/conf/srs.conf \
-    ossrs/srs:v4
+    ossrs/srs:4
 ```
 
 > Note: How to config SRS, please read wiki([CN](https://github.com/ossrs/srs/wiki/v4_CN_Home)/[EN](https://github.com/ossrs/srs/wiki/v4_EN_Home)).
