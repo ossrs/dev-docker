@@ -204,3 +204,7 @@ if [[ $SRS_MAJOR == 3 ]]; then
   echo "Create new tag latest for aliyun"
 fi
 
+echo ""
+echo "Check at:"
+echo "    https://cr.console.aliyun.com/repository/cn-hangzhou/ossrs/srs/images"
+
