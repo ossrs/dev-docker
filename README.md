@@ -5,6 +5,8 @@
 
 CentOS docker for [SRS](https://github.com/ossrs/srs) developer.
 
+> Note: Note that this docker is not support by GitHub actions, only for docker locally.
+
 ## Usage
 
 **>>> Install docker**
