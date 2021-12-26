@@ -9,8 +9,8 @@ FROM ubuntu:focal as build
 ENV DEBIAN_FRONTEND noninteractive
 
 # Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
-ADD sources.list /etc/apt/sources.list
-RUN apt-get update
+#ADD sources.list /etc/apt/sources.list
+#RUN apt-get update
 
 RUN apt-get update && \
     apt-get install -y aptitude gcc g++ make patch unzip python \
@@ -77,10 +77,6 @@ COPY --from=build /usr/local/ssl /usr/local/ssl
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
 
-# Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
-ADD sources.list /etc/apt/sources.list
-RUN apt-get update
-
 # Note that git is very important for codecov to discover the .codecov.yml
 RUN apt-get update && \
     apt-get install -y aptitude gdb gcc g++ make patch unzip python \
@@ -104,4 +100,8 @@ RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
 # For cross-build: https://github.com/ossrs/srs/wiki/v4_EN_SrsLinuxArm#ubuntu-cross-build-srs
 RUN apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
     gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+# Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
+ADD sources.list /etc/apt/sources.list
+RUN apt-get update
 
