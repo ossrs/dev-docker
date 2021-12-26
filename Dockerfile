@@ -86,9 +86,9 @@ RUN cd /tmp/CherryPy-3.2.4 && python2 setup.py install
 
 ENV PATH $PATH:/usr/local/go/bin
 RUN cd /usr/local && \
-    curl -L -O https://dl.google.com/go/go1.13.5.linux-amd64.tar.gz && \
-    tar xf go1.13.5.linux-amd64.tar.gz && \
-    rm -f go1.13.5.linux-amd64.tar.gz
+    curl -L -O https://go.dev/dl/go1.16.12.linux-amd64.tar.gz && \
+    tar xf go1.16.12.linux-amd64.tar.gz && \
+    rm -f go1.16.12.linux-amd64.tar.gz
 
 # For utest, the gtest.
 ADD googletest-release-1.6.0.tar.gz /usr/local
