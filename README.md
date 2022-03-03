@@ -6,4 +6,12 @@
 
 This is a node-av(node:slim) docker, with ffmpeg and ffprobe.
 
+## Usage
+
+To run FFmpeg, which is at `/usr/local/bin/ffmpeg`:
+
+```bash
+ffmpeg -h
+```
+
 Winlin 2019.11
