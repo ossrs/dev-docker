@@ -4,7 +4,7 @@ name: "Release"
 on:
   push:
     branches:
-      - 'node'
+      - 'node-av'
 
 jobs:
   docker:
