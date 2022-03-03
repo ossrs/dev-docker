@@ -72,6 +72,7 @@ FROM ubuntu:focal as dist
 WORKDIR /tmp/srs
 
 COPY --from=build /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
+COPY --from=build /usr/local/bin/ffprobe /usr/local/bin/ffprobe
 COPY --from=build /usr/local/ssl /usr/local/ssl
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
