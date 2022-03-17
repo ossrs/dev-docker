@@ -6,6 +6,7 @@ on:
     branches:
       - '!aarch64' # Error for GitHub action, see https://github.com/ossrs/developer/runs/4634346343?check_suite_focus=true
       - 'dev'
+      - 'dev-gcc7'
       - 'dev6'
       - 'dev8'
       - 'encoder'
