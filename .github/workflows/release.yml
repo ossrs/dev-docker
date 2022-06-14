@@ -8,7 +8,7 @@ on:
 
 jobs:
   docker-base:
-    name: release-docker-base
+    name: base
     runs-on: ubuntu-20.04
 
     steps:
@@ -65,11 +65,71 @@ jobs:
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base
 
-  docker-prod:
-    name: release-docker-prod
+  docker-base2:
+    name: base2
     runs-on: ubuntu-20.04
     needs:
       - docker-base
+
+    steps:
+      ################################################################
+      # Git checkout
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
+      # https://github.com/docker/setup-qemu-action
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      # https://github.com/docker/setup-buildx-action
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      ################################################################
+      # Build
+      # The github.ref is, for example, refs/tags/dev @see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+      # Generate variables like:
+      #   SRS_TAG=dev
+      # @see https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
+      - name: Generate varaiables
+        id: srs-vars
+        run: |
+          SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
+          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+
+      ################################################################
+      # Docker
+      - name: Login docker hub
+        uses: docker/login-action@v1
+        with:
+          username: "${{ secrets.DOCKER_USERNAME }}"
+          password: "${{ secrets.DOCKER_PASSWORD }}"
+      - name: Build and push to docker registry
+        run: |
+          docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
+            --output "type=image,push=true" \
+            -t ossrs/srs:${SRS_TAG}-base2 \
+            -f Dockerfile.base2 .
+
+      # Aliyun ACR
+      - name: Login aliyun hub
+        uses: docker/login-action@v1
+        with:
+          registry: registry.cn-hangzhou.aliyuncs.com
+          username: "${{ secrets.ACR_USERNAME }}"
+          password: "${{ secrets.ACR_PASSWORD }}"
+      - name: Copy to Aliyun registry
+        uses: akhilerm/tag-push-action@v2.0.0
+        with:
+          src: ossrs/srs:${{ env.SRS_TAG }}-base2
+          dst: |
+            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base2
+
+  docker-prod:
+    name: prod
+    runs-on: ubuntu-20.04
+    needs:
+      - docker-base2
 
     steps:
       ################################################################

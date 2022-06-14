@@ -4,7 +4,7 @@ ARG ARCH
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ossrs/srs:ubuntu20-base as build
+FROM ${ARCH}ossrs/srs:ubuntu20-base2 as build
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
@@ -37,34 +37,6 @@ SHELL ["/bin/bash", "-c"]
 # The cmake should be ready in base image.
 RUN which cmake && cmake --version
 
-# Openssl 1.1.* for SRS.
-ADD openssl-1.1.1j.tar.bz2 /tmp
-RUN cd /tmp/openssl-1.1.1j && \
-   ./config -no-shared -no-threads --prefix=/usr/local/ssl && make -j${JOBS} && make install_sw
-
-# Openssl 1.0.* for SRS.
-#ADD openssl-OpenSSL_1_0_2u.tar.gz /tmp
-#RUN cd /tmp/openssl-OpenSSL_1_0_2u && \
-#    ./config -no-shared -no-threads --prefix=/usr/local/ssl && make -j${JOBS} && make install_sw
-
-# For FFMPEG
-ADD nasm-2.14.tar.bz2 /tmp
-RUN cd /tmp/nasm-2.14 && ./configure && make -j${JOBS} && make install
-# For aac
-ADD fdk-aac-2.0.2.tar.gz /tmp
-RUN cd /tmp/fdk-aac-2.0.2 && bash autogen.sh && CXXFLAGS=-Wno-narrowing ./configure --disable-shared && make -j${JOBS} && make install
-# For mp3, see https://sourceforge.net/projects/lame/
-ADD  lame-3.100.tar.gz /tmp
-RUN cd /tmp/lame-3.100 && ./configure --disable-shared && make -j${JOBS} && make install
-# For libx264
-ADD x264-snapshot-20181116-2245.tar.bz2 /tmp
-RUN cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-shared --disable-cli --enable-static --enable-pic && make -j${JOBS} && make install
-# The libsrt for SRS, which depends on openssl.
-ADD srt-1.4.1.tar.gz /tmp
-RUN cd /tmp/srt-1.4.1 && \
-  ./configure --enable-shared=0 --enable-static --disable-app --enable-c++11=0 && \
-  make -j${JOBS} && make install
-
 # Build FFmpeg, static link libraries.
 ADD ffmpeg-4.2.1.tar.bz2 /tmp
 RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread \
@@ -79,7 +51,7 @@ RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread
 #--------------------------dist------------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ossrs/srs:ubuntu20-base as dist
+FROM ${ARCH}ossrs/srs:ubuntu20-base2 as dist
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
