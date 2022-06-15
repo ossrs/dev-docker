@@ -51,7 +51,7 @@ RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread
 #--------------------------dist------------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ossrs/srs:ubuntu20-base2 as dist
+FROM ${ARCH}ubuntu:focal as dist
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
@@ -63,6 +63,8 @@ WORKDIR /tmp/srs
 COPY --from=build /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
 COPY --from=build /usr/local/bin/ffprobe /usr/local/bin/ffprobe
 COPY --from=build /usr/local/ssl /usr/local/ssl
+# Note that we can't do condional copy, so we copy the whole /usr/local directory.
+COPY --from=build /usr/local /usr/local
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
@@ -76,6 +78,11 @@ RUN apt-get update && \
 # To use if in RUN, see https://github.com/moby/moby/issues/7281#issuecomment-389440503
 # Note that only exists issue like "/bin/sh: 1: [[: not found" for Ubuntu20, no such problem in CentOS7.
 SHELL ["/bin/bash", "-c"]
+
+# Copy cmake for linux/arm/v7
+RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
+      apt-get install -y cmake; \
+    fi
 
 # The cmake should be ready in base image.
 RUN which cmake && cmake --version
