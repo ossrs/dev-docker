@@ -4,7 +4,7 @@ ARG ARCH
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ossrs/srs:ubuntu20-base2 as build
+FROM ${ARCH}ossrs/srs:ubuntu20 as build
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
@@ -37,15 +37,15 @@ SHELL ["/bin/bash", "-c"]
 # The cmake should be ready in base image.
 RUN which cmake && cmake --version
 
-# Build FFmpeg, static link libraries.
-ADD ffmpeg-4.2.1.tar.bz2 /tmp
-RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread \
-        --enable-gpl --enable-nonfree \
-        --enable-postproc --enable-bzlib --enable-zlib \
-        --enable-libx264 --enable-libmp3lame --enable-libfdk-aac \
-        --enable-libxml2 --enable-demuxer=dash \
-        --enable-libsrt --pkg-config-flags='--static' && \
-    make -j${JOBS} && make install && echo "FFMPEG build and install successfully"
+# The ffmpeg and ssl should be ok.
+RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
+
+# Build SRS for cache, never install it.
+RUN mkdir -p /usr/local/srs-cache && cd /usr/local/srs-cache && \
+    apt-get install -y git && \
+    git clone -b develop https://github.com/ossrs/srs.git && \
+    cd srs/trunk && \
+    ./configure --jobs=${JOBS} && make -j${JOBS}
 
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
@@ -91,17 +91,17 @@ RUN which cmake && cmake --version
 ADD CherryPy-3.2.4.tar.gz2 /tmp
 RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
 
-ENV PATH $PATH:/usr/local/go/bin
-RUN if [[ -z $NO_GO ]]; then \
-      cd /usr/local && \
-      curl -L -O https://go.dev/dl/go1.16.12.linux-amd64.tar.gz && \
-      tar xf go1.16.12.linux-amd64.tar.gz && \
-      rm -f go1.16.12.linux-amd64.tar.gz; \
-    fi
-
-# For utest, the gtest.
-ADD googletest-release-1.6.0.tar.gz /usr/local
-RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
+# We already installed go and gtest.
+#ENV PATH $PATH:/usr/local/go/bin
+#RUN if [[ -z $NO_GO ]]; then \
+#      cd /usr/local && \
+#      curl -L -O https://go.dev/dl/go1.16.12.linux-amd64.tar.gz && \
+#      tar xf go1.16.12.linux-amd64.tar.gz && \
+#      rm -f go1.16.12.linux-amd64.tar.gz; \
+#    fi
+#
+#ADD googletest-release-1.6.0.tar.gz /usr/local
+#RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
 
 # For cross-build: https://github.com/ossrs/srs/wiki/v4_EN_SrsLinuxArm#ubuntu-cross-build-srs
 RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' ]]; then \
