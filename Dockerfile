@@ -41,11 +41,11 @@ RUN which cmake && cmake --version
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
 # Build SRS for cache, never install it.
-RUN mkdir -p /usr/local/srs-cache && cd /usr/local/srs-cache && \
-    apt-get install -y git && \
-    git clone -b develop https://github.com/ossrs/srs.git && \
-    cd srs/trunk && \
-    ./configure --jobs=${JOBS} && make -j${JOBS}
+RUN mkdir -p /usr/local/srs-cache
+WORKDIR /usr/local/srs-cache
+RUN apt-get install -y git && git clone -b develop https://github.com/ossrs/srs.git
+RUN cd srs/trunk && ./configure --jobs=${JOBS} && make -j${JOBS}
+RUN du -sh /usr/local/srs-cache/srs/trunk/*
 
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
