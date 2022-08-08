@@ -9,7 +9,7 @@ on:
 jobs:
 
   env-prod:
-    name: prod
+    name: setup env
     runs-on: ubuntu-20.04
 
     steps:
@@ -31,7 +31,7 @@ jobs:
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
 
   docker-prod:
-    name: prod
+    name: for docker
     runs-on: ubuntu-20.04
 
     steps:
@@ -62,7 +62,7 @@ jobs:
             -t ossrs/srs:$SRS_TAG .
 
   aliyun-prod:
-    name: prod
+    name: for aliyun
     runs-on: ubuntu-20.04
 
     steps:
