@@ -39,14 +39,15 @@ jobs:
 
     steps:
       ################################################################
-      # Git checkout
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Covert output to env
         run: |
           SRS_TAG=${{ jobs.env-prod.steps.srs-vars.outputs.SRS_TAG }}
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+
+      ################################################################
+      # Git checkout
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
@@ -77,14 +78,15 @@ jobs:
 
     steps:
       ################################################################
-      # Git checkout
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Covert output to env
         run: |
           SRS_TAG=${{ jobs.env-prod.steps.srs-vars.outputs.SRS_TAG }}
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+
+      ################################################################
+      # Git checkout
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
