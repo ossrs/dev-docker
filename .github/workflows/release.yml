@@ -16,7 +16,6 @@ jobs:
       # Git checkout
       - name: Checkout repository
         uses: actions/checkout@v2
-
       ################################################################
       # Build
       # The github.ref is, for example, refs/tags/dev @see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
@@ -72,6 +71,7 @@ jobs:
     runs-on: ubuntu-20.04
     needs:
       - env-prod
+      - docker-prod
     steps:
       ################################################################
       - name: Covert output to env
