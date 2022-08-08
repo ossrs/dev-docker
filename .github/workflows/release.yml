@@ -41,7 +41,7 @@ jobs:
       ################################################################
       - name: Covert output to env
         run: |
-          SRS_TAG=${{ jobs.env-prod.steps.srs-vars.outputs.SRS_TAG }}
+          SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
 
       ################################################################
@@ -80,7 +80,7 @@ jobs:
       ################################################################
       - name: Covert output to env
         run: |
-          SRS_TAG=${{ jobs.env-prod.steps.srs-vars.outputs.SRS_TAG }}
+          SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
 
       ################################################################
