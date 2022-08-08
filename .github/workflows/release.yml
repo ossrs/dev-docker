@@ -33,6 +33,8 @@ jobs:
   docker-prod:
     name: for docker
     runs-on: ubuntu-20.04
+    needs:
+      - env-prod
 
     steps:
       ################################################################
@@ -64,6 +66,8 @@ jobs:
   aliyun-prod:
     name: for aliyun
     runs-on: ubuntu-20.04
+    needs:
+      - env-prod
 
     steps:
       ################################################################
@@ -92,4 +96,14 @@ jobs:
           src: ossrs/srs:${{ env.SRS_TAG }}
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}
+
+  done:
+    name: done
+    runs-on: ubuntu-20.04
+    needs:
+      - docker-prod
+      - aliyun-prod
+
+    steps:
+      - run: echo 'All done'
 
