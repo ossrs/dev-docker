@@ -60,9 +60,6 @@ RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: 
 
 WORKDIR /tmp/srs
 
-COPY --from=build /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
-COPY --from=build /usr/local/bin/ffprobe /usr/local/bin/ffprobe
-COPY --from=build /usr/local/ssl /usr/local/ssl
 # Note that we can't do condional copy, so we copy the whole /usr/local directory.
 COPY --from=build /usr/local /usr/local
 
@@ -102,6 +99,11 @@ RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
 #
 #ADD googletest-release-1.6.0.tar.gz /usr/local
 #RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
+
+# Install 32bits adapter for crossbuild.
+RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' ]]; then \
+        apt-get -y install lib32z1-dev; \
+    fi
 
 # For cross-build: https://github.com/ossrs/srs/wiki/v4_EN_SrsLinuxArm#ubuntu-cross-build-srs
 RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' ]]; then \
