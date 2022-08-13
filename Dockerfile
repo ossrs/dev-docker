@@ -1,14 +1,10 @@
-ARG ARCH
-
 #------------------------------------------------------------------------------------
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
-FROM ${ARCH}centos:7 as build
+FROM centos:7 as build
 
-ARG BUILDPLATFORM
-ARG TARGETPLATFORM
 ARG JOBS=2
-RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS"
+RUN echo "JOBS: $JOBS"
 
 RUN yum install -y gcc gcc-c++ make patch sudo unzip perl zlib automake libtool \
     zlib-devel bzip2 bzip2-devel libxml2-devel \
@@ -60,13 +56,11 @@ RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
 #------------------------------------------------------------------------------------
-FROM ${ARCH}centos:7 as dist
+FROM centos:7 as dist
 
-ARG BUILDPLATFORM
-ARG TARGETPLATFORM
 ARG JOBS=2
 ARG NO_GO
-RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS, NO_GO: $NO_GO"
+RUN echo "JOBS: $JOBS, NO_GO: $NO_GO"
 
 WORKDIR /tmp/srs
 
