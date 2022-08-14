@@ -4,7 +4,7 @@ name: "Release"
 on:
   push:
     branches:
-      - 'ubuntu18'
+      - 'ubuntu18-cache'
 
 jobs:
   docker:
