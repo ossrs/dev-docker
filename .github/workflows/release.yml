@@ -27,7 +27,7 @@ jobs:
       SRS_TAG: ${{ env.SRS_TAG }}
 
   docker:
-    name: release-docker
+    name: docker-hub
     runs-on: ubuntu-20.04
     needs:
       - envs
@@ -51,7 +51,7 @@ jobs:
           docker push ossrs/srs:$SRS_TAG
 
   aliyun:
-    name: release-docker
+    name: aliyun-hub
     runs-on: ubuntu-20.04
     needs:
       - envs
