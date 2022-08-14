@@ -33,7 +33,7 @@ RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
 RUN apt-get install -y git && git clone -b develop https://github.com/ossrs/srs.git
-RUN cd srs/trunk && ./configure --jobs=${JOBS} && make -j${JOBS}
+RUN cd srs/trunk && ./configure --jobs=${JOBS} --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS}
 RUN du -sh /usr/local/srs-cache/srs/trunk/*
 
 #------------------------------------------------------------------------------------

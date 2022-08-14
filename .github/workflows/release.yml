@@ -4,7 +4,7 @@ name: "Release"
 on:
   push:
     branches:
-      - 'ubuntu16-cache'
+      - 'ubuntu16-cross-arm'
 
 jobs:
   docker:
