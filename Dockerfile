@@ -22,9 +22,11 @@ RUN which cmake && cmake --version
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
 # Build SRS for cache, never install it.
+#     SRS is 2d036c3fd Fix #2747: Support Apple Silicon M1(aarch64). v5.0.41
+# Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
-RUN git clone -b develop https://github.com/ossrs/srs.git
+RUN git clone --depth=1 -b develop https://github.com/ossrs/srs.git
 RUN cd srs/trunk && ./configure --jobs=${JOBS} --cxx11=off --cxx14=off && make -j${JOBS}
 RUN du -sh /usr/local/srs-cache/srs/trunk/*
 
