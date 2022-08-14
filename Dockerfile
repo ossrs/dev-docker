@@ -104,12 +104,12 @@ ADD googletest-release-1.6.0.tar.gz /usr/local
 RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
 
 # Install 32bits adapter for crossbuild.
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' ]]; then \
+RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' && $TARGETPLATFORM != 'linux/arm64' ]]; then \
         apt-get -y install lib32z1-dev; \
     fi
 
 # For cross-build: https://github.com/ossrs/srs/wiki/v4_EN_SrsLinuxArm#ubuntu-cross-build-srs
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' ]]; then \
+RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' && $TARGETPLATFORM != 'linux/arm64' ]]; then \
         apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu; \
     fi
