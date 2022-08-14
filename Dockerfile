@@ -43,7 +43,7 @@ RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 # Build SRS for cache, never install it.
 RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' ]]; then \
+RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' && $TARGETPLATFORM != 'linux/arm64' ]]; then \
       apt-get install -y git && git clone -b develop https://github.com/ossrs/srs.git && \
       cd srs/trunk && ./configure --jobs=${JOBS} --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS} && \
       du -sh /usr/local/srs-cache/srs/trunk/*; \
@@ -103,12 +103,12 @@ RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
 #RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
 
 # Install 32bits adapter for crossbuild.
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' ]]; then \
+RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' && $TARGETPLATFORM != 'linux/arm64' ]]; then \
         apt-get -y install lib32z1-dev; \
     fi
 
 # For cross-build: https://github.com/ossrs/srs/wiki/v4_EN_SrsLinuxArm#ubuntu-cross-build-srs
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' ]]; then \
+RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' && $TARGETPLATFORM != 'linux/arm64' ]]; then \
       apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
         gcc-aarch64-linux-gnu g++-aarch64-linux-gnu; \
     fi
