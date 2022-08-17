@@ -1,5 +1,5 @@
 # Docker-SRS
 
-Docker for [SRS](https://github.com/ossrs/srs).
+Docker cache for [srs-docs](https://github.com/ossrs/srs-docs).
 
 Winlin, 2021.03

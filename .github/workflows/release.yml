@@ -1,0 +1,99 @@
+name: "Release"
+
+# @see https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags
+on:
+  push:
+    branches:
+      - 'docs-cache'
+
+jobs:
+
+  env-prod:
+    name: setup env
+    runs-on: ubuntu-20.04
+    steps:
+      ################################################################
+      # Git checkout
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      ################################################################
+      # Build
+      # The github.ref is, for example, refs/tags/dev @see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+      # Generate variables like:
+      #   SRS_TAG=dev
+      # @see https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
+      - name: Generate varaiables
+        id: srs-vars
+        run: |
+          SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
+          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+          echo "::set-output name=SRS_TAG::${SRS_TAG}"
+    outputs:
+      SRS_TAG: ${{ steps.srs-vars.outputs.SRS_TAG }}
+
+  docker-prod:
+    name: for docker
+    runs-on: ubuntu-20.04
+    needs:
+      - env-prod
+    steps:
+      ################################################################
+      - name: Covert output to env
+        run: |
+          SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
+          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+      ################################################################
+      # Git checkout
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      ################################################################
+      # Docker
+      - name: Login docker hub
+        uses: docker/login-action@v1
+        with:
+          username: "${{ secrets.DOCKER_USERNAME }}"
+          password: "${{ secrets.DOCKER_PASSWORD }}"
+      - name: Build and push to docker registry
+        run: |
+          docker build --tag ossrs/docs:$SRS_TAG .
+          docker push --all-tags ossrs/docs
+
+  aliyun-prod:
+    name: for aliyun
+    runs-on: ubuntu-20.04
+    needs:
+      - env-prod
+      - docker-prod
+    steps:
+      ################################################################
+      - name: Covert output to env
+        run: |
+          SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
+          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+      ################################################################
+      # Git checkout
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      # Aliyun ACR
+      - name: Login aliyun hub
+        uses: docker/login-action@v1
+        with:
+          registry: registry.cn-hangzhou.aliyuncs.com
+          username: "${{ secrets.ACR_USERNAME }}"
+          password: "${{ secrets.ACR_PASSWORD }}"
+      - name: Copy to Aliyun registry
+        uses: akhilerm/tag-push-action@v2.0.0
+        with:
+          src: ossrs/docs:${{ env.SRS_TAG }}
+          dst: |
+            registry.cn-hangzhou.aliyuncs.com/ossrs/docs:${{ env.SRS_TAG }}
+
+  done:
+    name: done
+    runs-on: ubuntu-20.04
+    needs:
+      - docker-prod
+      - aliyun-prod
+    steps:
+      - run: echo 'All done'
+
