@@ -80,6 +80,9 @@ RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unz
 # For GCP/pprof/gperf, see https://winlin.blog.csdn.net/article/details/53503869
 RUN yum install -y graphviz
 
+# For https://github.com/google/sanitizers
+RUN yum install -y libasan
+
 # Install cherrypy for HTTP hooks.
 ADD CherryPy-3.2.4.tar.gz2 /tmp
 RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
