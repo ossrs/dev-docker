@@ -4,9 +4,6 @@
 #------------------------------------------------------------------------------------
 FROM ossrs/srs:dev-gcc7 as build
 
-ARG JOBS=2
-RUN echo "JOBS: $JOBS"
-
 RUN yum install -y gcc gcc-c++ make patch sudo unzip perl zlib automake libtool \
     zlib-devel bzip2 bzip2-devel libxml2-devel \
     tcl cmake
@@ -25,8 +22,8 @@ RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
 RUN git clone --depth=1 -b develop https://github.com/ossrs/srs.git
 WORKDIR /usr/local/srs-cache/srs/trunk
-RUN scl enable devtoolset-7 -- ./configure --jobs=${JOBS}
-RUN scl enable devtoolset-7 -- make -j${JOBS}
+RUN scl enable devtoolset-7 -- ./configure --sanitizer=off
+RUN scl enable devtoolset-7 -- make
 RUN du -sh /usr/local/srs-cache/srs/trunk/*
 
 #------------------------------------------------------------------------------------
