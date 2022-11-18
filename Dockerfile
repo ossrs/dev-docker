@@ -3,9 +3,6 @@
 #------------------------------------------------------------------------------------
 FROM ossrs/srs:dev as build
 
-ARG JOBS=2
-RUN echo "JOBS: $JOBS"
-
 RUN yum install -y gcc gcc-c++ make patch sudo unzip perl zlib automake libtool \
     zlib-devel bzip2 bzip2-devel libxml2-devel \
     tcl cmake
@@ -29,7 +26,7 @@ RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
 RUN git clone --depth=1 -b develop https://github.com/ossrs/srs.git
-RUN cd srs/trunk && ./configure --jobs=${JOBS} && make -j${JOBS}
+RUN cd srs/trunk && ./configure && make
 RUN du -sh /usr/local/srs-cache/srs/trunk/*
 
 #------------------------------------------------------------------------------------
@@ -37,9 +34,8 @@ RUN du -sh /usr/local/srs-cache/srs/trunk/*
 #------------------------------------------------------------------------------------
 FROM centos:7 as dist
 
-ARG JOBS=2
 ARG NO_GO
-RUN echo "JOBS: $JOBS, NO_GO: $NO_GO"
+RUN echo "NO_GO: $NO_GO"
 
 WORKDIR /tmp/srs
 
