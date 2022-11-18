@@ -35,7 +35,7 @@ RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
 RUN apt-get install -y git && git clone --depth=1 -b develop https://github.com/ossrs/srs.git
-RUN cd srs/trunk && ./configure --jobs=${JOBS} && make -j${JOBS}
+RUN cd srs/trunk && ./configure && make
 RUN du -sh /usr/local/srs-cache/srs/trunk/*
 
 #------------------------------------------------------------------------------------
