@@ -27,7 +27,7 @@ RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
 RUN git clone --depth=1 -b develop https://github.com/ossrs/srs.git
-RUN cd srs/trunk && ./configure --jobs=${JOBS} --cxx11=off --cxx14=off && make -j${JOBS}
+RUN cd srs/trunk && ./configure --cxx11=off --cxx14=off --sanitizer=off && make
 RUN du -sh /usr/local/srs-cache/srs/trunk/*
 
 #------------------------------------------------------------------------------------
