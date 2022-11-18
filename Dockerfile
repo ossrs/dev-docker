@@ -8,8 +8,7 @@ FROM ${ARCH}ossrs/srs:ubuntu20 as build
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
-ARG JOBS=2
-RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS"
+RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM"
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
@@ -46,7 +45,7 @@ RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
 RUN apt-get install -y git && git clone --depth=1 -b develop https://github.com/ossrs/srs.git
-RUN cd srs/trunk && ./configure --jobs=${JOBS} && make -j${JOBS}
+RUN cd srs/trunk && ./configure && make
 RUN du -sh /usr/local/srs-cache/srs/trunk/*
 
 #------------------------------------------------------------------------------------
@@ -57,8 +56,7 @@ FROM ${ARCH}ubuntu:focal as dist
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
-ARG JOBS=2
-RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS"
+RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM"
 
 WORKDIR /tmp/srs
 
