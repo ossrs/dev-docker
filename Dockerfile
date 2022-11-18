@@ -61,6 +61,9 @@ RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
 # Upgrade to GCC 7 for gtest, see https://stackoverflow.com/a/39731134/17679565
 RUN yum install -y centos-release-scl && yum install -y devtoolset-7-gcc* 
 
+# For address sanitizer, see https://github.com/google/sanitizers
+RUN yum install -y libasan devtoolset-7-libasan-devel
+
 # See https://austindewey.com/2019/03/26/enabling-software-collections-binaries-on-a-docker-image/
 # scl enable devtoolset-7 bash
 COPY scl_enable /usr/bin/scl_enable
