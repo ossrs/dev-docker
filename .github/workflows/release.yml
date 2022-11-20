@@ -4,111 +4,123 @@ name: "Release"
 on:
   push:
     branches:
-      - 'ubuntu20-cache'
+      - 'cygwin64-cache'
 
 jobs:
-
-  env-prod:
-    name: setup env
+  envs:
+    name: envs
     runs-on: ubuntu-20.04
     steps:
-      ################################################################
       # Git checkout
       - name: Checkout repository
         uses: actions/checkout@v2
-      ################################################################
-      # Build
-      # The github.ref is, for example, refs/tags/dev @see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+      # The github.ref is, for example, refs/tags/v5.0.145 or refs/tags/v5.0-r8
       # Generate variables like:
-      #   SRS_TAG=dev
+      #   SRS_TAG=v5.0-r8
+      #   SRS_TAG=v5.0.145
       # @see https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
       - name: Generate varaiables
-        id: srs-vars
         run: |
           SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
-          echo "::set-output name=SRS_TAG::${SRS_TAG}"
     outputs:
-      SRS_TAG: ${{ steps.srs-vars.outputs.SRS_TAG }}
+      SRS_TAG: ${{ env.SRS_TAG }}
 
-  docker-prod:
-    name: for docker
-    runs-on: ubuntu-20.04
+  cygwin64:
+    name: cygwin64
+    runs-on: windows-latest
     needs:
-      - env-prod
+      - envs
     steps:
-      ################################################################
-      - name: Covert output to env
-        run: |
-          SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
-          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
-      ################################################################
-      # Git checkout
+      # See https://github.com/cygwin/cygwin-install-action#parameters
+      # Note that https://github.com/egor-tensin/setup-cygwin fails to install packages.
+      - name: Setup Cygwin
+        uses: cygwin/cygwin-install-action@master
+        with:
+          platform: x86_64
+          packages: bash make gcc-g++ cmake automake patch pkg-config tcl
+          install-dir: C:\cygwin64
+      ##################################################################################################################
       - name: Checkout repository
         uses: actions/checkout@v2
-      # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
-      # https://github.com/docker/setup-qemu-action
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      # https://github.com/docker/setup-buildx-action
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      ################################################################
-      # Docker
-      - name: Login docker hub
+      ##################################################################################################################
+      - name: Build and test SRS
+        env:
+          SHELLOPTS: igncr
+          SRS_WORKSPACE: ${{ github.workspace }}
+        shell: C:\cygwin64\bin\bash.exe --login '{0}'
+        run: |
+          cd $(cygpath -u $SRS_WORKSPACE) &&
+          git clone --depth=1 -b develop https://github.com/ossrs/srs.git &&
+          pwd && du -sh * && export PATH=/usr/bin:/usr/local/bin &&
+          (cd srs/trunk && ./configure --utest=on && make utest && ./objs/srs_utest) &&
+          tar jcf srs.tar.bz2 srs && pwd && du -sh *
+      ##################################################################################################################
+      - uses: actions/upload-artifact@v2
+        with:
+          name: srs-cache
+          path: srs.tar.bz2
+          retention-days: 1
+    outputs:
+      SRS_CYGWIN_DONE: ok
+
+  docker:
+    name: docker-hub
+    runs-on: ubuntu-20.04
+    needs:
+      - envs
+      - cygwin64
+    steps:
+      ##################################################################################################################
+      - name: Covert output to env
+        run: |
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
+      ##################################################################################################################
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      ##################################################################################################################
+      - uses: actions/download-artifact@v2
+        with:
+          name: srs-cache
+      - uses: geekyeggo/delete-artifact@v2
+        with:
+          name: srs-cache
+      ##################################################################################################################
+      - name: Login to docker hub
         uses: docker/login-action@v1
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
-      - name: Build and push to docker registry
+      - name: Build docker image
         run: |
-          docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
-            --output "type=image,push=true" \
-            -t ossrs/srs:$SRS_TAG .
+          pwd && ls -lhR &&
+          docker build --tag ossrs/srs:$SRS_TAG .
+      - name: Push to docker hub
+        run: |
+          docker push ossrs/srs:$SRS_TAG
 
-  aliyun-prod:
-    name: for aliyun
+  aliyun:
+    name: aliyun-hub
     runs-on: ubuntu-20.04
     needs:
-      - env-prod
-      - docker-prod
+      - envs
+      - docker
     steps:
-      ################################################################
       - name: Covert output to env
         run: |
-          SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
-          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
-      ################################################################
-      # Git checkout
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
-      # https://github.com/docker/setup-qemu-action
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      # https://github.com/docker/setup-buildx-action
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      # Aliyun ACR
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       - name: Login aliyun hub
         uses: docker/login-action@v1
         with:
           registry: registry.cn-hangzhou.aliyuncs.com
           username: "${{ secrets.ACR_USERNAME }}"
           password: "${{ secrets.ACR_PASSWORD }}"
-      - name: Copy to Aliyun registry
+      - name: Push to Aliyun registry for ossrs/srs
         uses: akhilerm/tag-push-action@v2.0.0
         with:
           src: ossrs/srs:${{ env.SRS_TAG }}
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}
 
-  done:
-    name: done
-    runs-on: ubuntu-20.04
-    needs:
-      - docker-prod
-      - aliyun-prod
-    steps:
-      - run: echo 'All done'
+
 

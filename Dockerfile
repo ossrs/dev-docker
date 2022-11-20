@@ -40,13 +40,14 @@ RUN which cmake && cmake --version
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
 # Build SRS for cache, never install it.
-#     SRS is d3441d23a For #2532: Windows: Replace ln by cp for windows. v5.0.87 (#3246)
+#     SRS is b18ee398e Windows: Support cygwin pipline and packager. v5.0.89 (#3257)
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
-WORKDIR /usr/local/srs-cache
-RUN apt-get install -y git && git clone --depth=1 -b develop https://github.com/ossrs/srs.git
-RUN cd srs/trunk && ./configure && make
-RUN du -sh /usr/local/srs-cache/srs/trunk/*
+# Note that cygwin build cache files for SRS.
+ADD srs.tar.bz2 /usr/local/srs-cache
+RUN ls -lh /usr/local/srs-cache && \
+    ls -lh /usr/local/srs-cache/srs && \
+    du -sh /usr/local/srs-cache/srs/trunk/*
 
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
@@ -70,49 +71,9 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get install -y aptitude gdb gcc g++ make patch unzip python \
         autoconf automake libtool pkg-config libxml2-dev liblzma-dev curl net-tools \
-        tcl
-
-# To use if in RUN, see https://github.com/moby/moby/issues/7281#issuecomment-389440503
-# Note that only exists issue like "/bin/sh: 1: [[: not found" for Ubuntu20, no such problem in CentOS7.
-SHELL ["/bin/bash", "-c"]
-
-# Copy cmake for linux/arm/v7
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
-      apt-get install -y cmake; \
-    fi
+        tcl cmake
 
 # The cmake should be ready in base image.
 RUN which cmake && cmake --version
-
-# Install cherrypy for HTTP hooks.
-ADD CherryPy-3.2.4.tar.gz2 /tmp
-RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
-
-# We already installed go and gtest.
-#ENV PATH $PATH:/usr/local/go/bin
-#RUN if [[ -z $NO_GO ]]; then \
-#      cd /usr/local && \
-#      curl -L -O https://go.dev/dl/go1.16.12.linux-amd64.tar.gz && \
-#      tar xf go1.16.12.linux-amd64.tar.gz && \
-#      rm -f go1.16.12.linux-amd64.tar.gz; \
-#    fi
-#
-#ADD googletest-release-1.6.0.tar.gz /usr/local
-#RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
-
-# Install 32bits adapter for crossbuild.
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' && $TARGETPLATFORM != 'linux/arm64' ]]; then \
-        apt-get -y install lib32z1-dev; \
-    fi
-
-# For cross-build: https://github.com/ossrs/srs/wiki/v4_EN_SrsLinuxArm#ubuntu-cross-build-srs
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' && $TARGETPLATFORM != 'linux/arm64' ]]; then \
-      apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
-        gcc-aarch64-linux-gnu g++-aarch64-linux-gnu; \
-    fi
-
-# Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
-#ADD sources.list /etc/apt/sources.list
-#RUN apt-get update
 
 
