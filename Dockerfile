@@ -21,7 +21,7 @@ RUN which cmake && cmake --version
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
 # Build SRS for cache, never install it.
-#     SRS is d3441d23a For #2532: Windows: Replace ln by cp for windows. v5.0.87 (#3246)
+#     SRS is 6fa17aa3f ST: Support st_destroy to free resources for asan.
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
