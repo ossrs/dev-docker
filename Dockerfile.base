@@ -20,7 +20,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
     apt-get install -y aptitude gcc g++ make patch unzip python \
-        autoconf automake libtool pkg-config libxml2-dev zlib1g-dev \
+        autoconf automake libtool pkg-config zlib1g-dev \
         liblzma-dev libzip-dev libbz2-dev tcl
 
 # Libs path for app which depends on ssl, such as libsrt or cmake.
@@ -44,16 +44,11 @@ RUN cd /tmp/openssl-1.1.1j && \
 #RUN cd /tmp/openssl-OpenSSL_1_0_2u && \
 #    ./config -no-shared -no-threads --prefix=/usr/local/ssl && make -j${JOBS} && make install_sw
 
-# For FFMPEG
-ADD nasm-2.14.tar.bz2 /tmp
-RUN cd /tmp/nasm-2.14 && ./configure && make -j${JOBS} && make install
-# For aac
-ADD fdk-aac-2.0.2.tar.gz /tmp
-RUN cd /tmp/fdk-aac-2.0.2 && bash autogen.sh && CXXFLAGS=-Wno-narrowing ./configure --disable-shared && make -j${JOBS} && make install
-# For mp3, see https://sourceforge.net/projects/lame/
-ADD  lame-3.100.tar.gz /tmp
-RUN cd /tmp/lame-3.100 && ./configure --disable-shared && make -j${JOBS} && make install
-# For libx264
-ADD x264-snapshot-20181116-2245.tar.bz2 /tmp
-RUN cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-shared --disable-cli --enable-static --enable-pic && make -j${JOBS} && make install
+# For cmake. Note that the PATH has /usr/local/bin by default in ubuntu:focal.
+ADD CMake-3.22.5.tar.gz /tmp
+RUN cd /tmp/CMake-3.22.5 && ./configure && make -j${JOBS} && make install
+#ENV PATH=$PATH:/usr/local/bin
+
+# To limit each jobs in 6h, see https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration#usage-limits
+RUN which cmake && cmake --version
 

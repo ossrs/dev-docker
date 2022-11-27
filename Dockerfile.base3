@@ -4,7 +4,7 @@ ARG ARCH
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ossrs/srs:ubuntu20-base as build
+FROM ${ARCH}ossrs/srs:ubuntu20-base2 as build
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
@@ -40,33 +40,20 @@ RUN which cmake 2>/dev/null || apt-get install -y cmake
 # To limit each jobs in 6h, see https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration#usage-limits
 RUN which cmake && cmake --version
 
-# For FFMPEG
-ADD nasm-2.14.tar.bz2 /tmp
-RUN cd /tmp/nasm-2.14 && ./configure && make -j${JOBS} && make install
+# The libsrt for SRS, which depends on openssl.
+ADD srt-1.4.1.tar.gz /tmp
+RUN cd /tmp/srt-1.4.1 && \
+  ./configure --enable-shared=0 --enable-static --disable-app --enable-c++11=0 && \
+  make -j${JOBS} && make install
 
-# For aac
-ADD fdk-aac-2.0.2.tar.gz /tmp
-RUN cd /tmp/fdk-aac-2.0.2 && bash autogen.sh && CXXFLAGS=-Wno-narrowing ./configure --disable-shared && make -j${JOBS} && make install
-# For mp3, see https://sourceforge.net/projects/lame/
-ADD  lame-3.100.tar.gz /tmp
-RUN cd /tmp/lame-3.100 && ./configure --disable-shared && make -j${JOBS} && make install
-# For libx264
-ADD x264-snapshot-20181116-2245.tar.bz2 /tmp
-RUN cd /tmp/x264-snapshot-20181116-2245 && ./configure --disable-shared --disable-cli --enable-static --enable-pic && make -j${JOBS} && make install
-# For libxml2.
-RUN apt install -y python-dev
-ADD libxml2-2.9.12.tar.gz /tmp
-RUN cd /tmp/libxml2-2.9.12 && ./autogen.sh && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
-
-# For libx265. Note that we force to generate the x265.pc by replace X265_LATEST_TAG.
-#     if(X265_LATEST_TAG)
-#         configure_file("x265.pc.in" "x265.pc" @ONLY)
-ADD x265-3.5_RC2.tar.bz2 /tmp
-# Disable libx265 for ARMv7, because it failed for https://github.com/google/XNNPACK/issues/1465
-#     blockcopy8.S:679: Error: selected processor does not support `usad8 r0,r0,r1' in ARM mode
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
-        cd /tmp/x265-3.5_RC2/build/linux && \
-        sed -i 's/^if(X265_LATEST_TAG)/if(TRUE)/g' ../../source/CMakeLists.txt && \
-        cmake -DENABLE_SHARED=OFF ../../source && make -j${JOBS} && make install; \
-    fi
+# Build FFmpeg, static link libraries.
+ADD ffmpeg-4.2.1.tar.bz2 /tmp
+RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread \
+        --enable-gpl --enable-nonfree \
+        --enable-postproc --enable-bzlib --enable-zlib \
+        --enable-libx264 --enable-libmp3lame --enable-libfdk-aac \
+        --enable-libxml2 --enable-demuxer=dash \
+        --enable-libsrt --pkg-config-flags='--static' && \
+    make -j${JOBS} && make install && echo "FFmpeg4 build and install successfully"
+RUN cp /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg4
 
