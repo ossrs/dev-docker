@@ -4,7 +4,7 @@ name: "Release"
 on:
   push:
     branches:
-      - 'dev6-cache'
+      - 'dev6-cache-not-maintained'
 
 jobs:
   envs:
