@@ -4,7 +4,7 @@ name: "Release"
 on:
   push:
     branches:
-      - 'dev8'
+      - 'dev8-not-maintained'
 
 jobs:
   docker:
