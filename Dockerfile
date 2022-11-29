@@ -40,7 +40,7 @@ RUN which cmake && cmake --version
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
 # Build SRS for cache, never install it.
-#     SRS is 6fa17aa3f ST: Support st_destroy to free resources for asan.
+#     SRS is 79d096ae9 Merge branch 5.0.98 into develop
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
@@ -62,6 +62,8 @@ WORKDIR /tmp/srs
 
 # Note that we can't do condional copy, so we copy the whole /usr/local directory.
 COPY --from=build /usr/local /usr/local
+# Note that the PATH has /usr/local/bin by default in ubuntu:focal.
+#ENV PATH=$PATH:/usr/local/bin
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
@@ -76,19 +78,14 @@ RUN apt-get update && \
 # Note that only exists issue like "/bin/sh: 1: [[: not found" for Ubuntu20, no such problem in CentOS7.
 SHELL ["/bin/bash", "-c"]
 
-# Copy cmake for linux/arm/v7
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
-      apt-get install -y cmake; \
-    fi
-
 # The cmake should be ready in base image.
 RUN which cmake && cmake --version
 
 # Install cherrypy for HTTP hooks.
-ADD CherryPy-3.2.4.tar.gz2 /tmp
-RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
+#ADD CherryPy-3.2.4.tar.gz2 /tmp
+#RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
 
-# We already installed go and gtest.
+# We already installed go and gtest in /usr/local.
 #ENV PATH $PATH:/usr/local/go/bin
 #RUN if [[ -z $NO_GO ]]; then \
 #      cd /usr/local && \
