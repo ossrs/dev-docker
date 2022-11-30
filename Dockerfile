@@ -121,7 +121,7 @@ RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unz
 
 # The cmake should be ready in base image. Use hash to clear cache for cmake,
 # see https://stackoverflow.com/a/46805870/17679565
-RUN hash -r && which cmake && cmake --version
+RUN which cmake && cmake --version
 
 # For GCP/pprof/gperf, see https://winlin.blog.csdn.net/article/details/53503869
 RUN yum install -y graphviz
@@ -141,7 +141,7 @@ RUN if [[ -z $NO_GO ]]; then \
       rm -f go1.16.12.linux-amd64.tar.gz; \
     fi
 
-# For utest, the gtest.
-ADD googletest-release-1.6.0.tar.gz /usr/local
-RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
+# For utest, the gtest. See https://github.com/google/googletest/releases/tag/release-1.11.0
+ADD googletest-release-1.11.0.tar.gz /usr/local
+RUN ln -sf /usr/local/googletest-release-1.11.0/googletest /usr/local/gtest
 
