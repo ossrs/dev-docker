@@ -13,7 +13,7 @@ jobs:
       ################################################################
       # Git checkout
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - uses: dorny/paths-filter@v2
         id: filter
         with:
@@ -26,11 +26,14 @@ jobs:
               - 'Dockerfile.base3'
             base4:
               - 'Dockerfile.base4'
+            base5:
+              - 'Dockerfile.base5'
     outputs:
       base: ${{ steps.filter.outputs.base }}
       base2: ${{ steps.filter.outputs.base2 }}
       base3: ${{ steps.filter.outputs.base3 }}
       base4: ${{ steps.filter.outputs.base4 }}
+      base5: ${{ steps.filter.outputs.base5 }}
 
   docker-base:
     needs: check
@@ -39,7 +42,7 @@ jobs:
     steps:
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
@@ -60,7 +63,7 @@ jobs:
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -72,13 +75,13 @@ jobs:
             -f Dockerfile.base .
       ################################################################
       - name: Login aliyun hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: registry.cn-hangzhou.aliyuncs.com
           username: "${{ secrets.ACR_USERNAME }}"
           password: "${{ secrets.ACR_PASSWORD }}"
       - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.0.0
+        uses: akhilerm/tag-push-action@v2.1.0
         with:
           src: ossrs/srs:${{ env.SRS_TAG }}-base
           dst: |
@@ -95,7 +98,7 @@ jobs:
     steps:
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
@@ -116,7 +119,7 @@ jobs:
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -128,13 +131,13 @@ jobs:
             -f Dockerfile.base2 .
       ################################################################
       - name: Login aliyun hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: registry.cn-hangzhou.aliyuncs.com
           username: "${{ secrets.ACR_USERNAME }}"
           password: "${{ secrets.ACR_PASSWORD }}"
       - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.0.0
+        uses: akhilerm/tag-push-action@v2.1.0
         with:
           src: ossrs/srs:${{ env.SRS_TAG }}-base2
           dst: |
@@ -151,7 +154,7 @@ jobs:
     steps:
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
@@ -172,7 +175,7 @@ jobs:
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -184,13 +187,13 @@ jobs:
             -f Dockerfile.base3 .
       ################################################################
       - name: Login aliyun hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: registry.cn-hangzhou.aliyuncs.com
           username: "${{ secrets.ACR_USERNAME }}"
           password: "${{ secrets.ACR_PASSWORD }}"
       - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.0.0
+        uses: akhilerm/tag-push-action@v2.1.0
         with:
           src: ossrs/srs:${{ env.SRS_TAG }}-base3
           dst: |
@@ -207,7 +210,7 @@ jobs:
     steps:
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
@@ -228,7 +231,7 @@ jobs:
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -240,13 +243,13 @@ jobs:
             -f Dockerfile.base4 .
       ################################################################
       - name: Login aliyun hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: registry.cn-hangzhou.aliyuncs.com
           username: "${{ secrets.ACR_USERNAME }}"
           password: "${{ secrets.ACR_PASSWORD }}"
       - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.0.0
+        uses: akhilerm/tag-push-action@v2.1.0
         with:
           src: ossrs/srs:${{ env.SRS_TAG }}-base4
           dst: |
@@ -254,15 +257,16 @@ jobs:
     outputs:
       SRS_DOCKER_BASE4_DONE: ok
 
-  docker-prod:
-    name: prod
-    runs-on: ubuntu-20.04
+  docker-base5:
     needs:
       - docker-base4
+      - check
+    if: needs.check.outputs.base5 == 'true'
+    runs-on: ubuntu-20.04
     steps:
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
@@ -283,7 +287,62 @@ jobs:
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
+        with:
+          username: "${{ secrets.DOCKER_USERNAME }}"
+          password: "${{ secrets.DOCKER_PASSWORD }}"
+      - name: Build and push to docker registry
+        run: |
+          docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
+            --output "type=image,push=true" \
+            -t ossrs/srs:${SRS_TAG}-base5 \
+            -f Dockerfile.base5 .
+      ################################################################
+      - name: Login aliyun hub
+        uses: docker/login-action@v2
+        with:
+          registry: registry.cn-hangzhou.aliyuncs.com
+          username: "${{ secrets.ACR_USERNAME }}"
+          password: "${{ secrets.ACR_PASSWORD }}"
+      - name: Copy to Aliyun registry
+        uses: akhilerm/tag-push-action@v2.1.0
+        with:
+          src: ossrs/srs:${{ env.SRS_TAG }}-base5
+          dst: |
+            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base5
+    outputs:
+      SRS_DOCKER_BASE5_DONE: ok
+
+  docker-prod:
+    name: prod
+    runs-on: ubuntu-20.04
+    needs:
+      - docker-base5
+    steps:
+      ################################################################
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      ################################################################
+      # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
+      # https://github.com/docker/setup-qemu-action
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      # https://github.com/docker/setup-buildx-action
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      ################################################################
+      # The github.ref is, for example, refs/tags/dev @see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+      # Generate variables like:
+      #   SRS_TAG=dev
+      # @see https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
+      - name: Generate varaiables
+        id: srs-vars
+        run: |
+          SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
+          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+      ################################################################
+      - name: Login docker hub
+        uses: docker/login-action@v2
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -294,13 +353,13 @@ jobs:
             -t ossrs/srs:$SRS_TAG .
       ################################################################
       - name: Login aliyun hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: registry.cn-hangzhou.aliyuncs.com
           username: "${{ secrets.ACR_USERNAME }}"
           password: "${{ secrets.ACR_PASSWORD }}"
       - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.0.0
+        uses: akhilerm/tag-push-action@v2.1.0
         with:
           src: ossrs/srs:${{ env.SRS_TAG }}
           dst: |

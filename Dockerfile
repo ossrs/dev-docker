@@ -36,8 +36,8 @@ RUN ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
 ENV DEBIAN_FRONTEND noninteractive
 
 # Note that git is very important for codecov to discover the .codecov.yml
-RUN apt-get update && \
-    apt-get install -y aptitude gdb gcc g++ make patch unzip python \
+RUN apt update && \
+    apt install -y aptitude gdb gcc g++ make patch unzip python \
         autoconf automake libtool pkg-config liblzma-dev curl net-tools \
         tcl
 
@@ -48,6 +48,9 @@ SHELL ["/bin/bash", "-c"]
 # The cmake should be ready in base image. Use hash to clear cache for cmake,
 # see https://stackoverflow.com/a/46805870/17679565
 RUN hash -r && which cmake && cmake --version
+
+# For https://github.com/google/sanitizers
+RUN apt install -y libasan5
 
 # Install cherrypy for HTTP hooks.
 #ADD CherryPy-3.2.4.tar.gz2 /tmp

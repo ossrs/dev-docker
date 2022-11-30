@@ -34,26 +34,32 @@ ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/lib/pkgconfig:/usr/local/lib64/p
 # Note that only exists issue like "/bin/sh: 1: [[: not found" for Ubuntu20, no such problem in CentOS7.
 SHELL ["/bin/bash", "-c"]
 
-# Install cmake if not built from code, to make this not depends on Dockerfile.base
-RUN which cmake 2>/dev/null || apt-get install -y cmake
-
 # To limit each jobs in 6h, see https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration#usage-limits
 RUN which cmake && cmake --version
 
-# The libsrt for SRS, which depends on openssl.
+# Cost: 502.5s
+# The libsrt for SRS, which depends on openssl and cmake.
 ADD srt-1.4.1.tar.gz /tmp
 RUN cd /tmp/srt-1.4.1 && \
   ./configure --enable-shared=0 --enable-static --disable-app --enable-c++11=0 && \
   make -j${JOBS} && make install
 
-# Build FFmpeg, static link libraries.
-ADD ffmpeg-4.2.1.tar.bz2 /tmp
-RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread \
-        --enable-gpl --enable-nonfree \
-        --enable-postproc --enable-bzlib --enable-zlib \
-        --enable-libx264 --enable-libmp3lame --enable-libfdk-aac \
-        --enable-libxml2 --enable-demuxer=dash \
-        --enable-libsrt --pkg-config-flags='--static' && \
-    make -j${JOBS} && make install && echo "FFmpeg4 build and install successfully"
-RUN cp /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg4
+# Cost: 904.1s
+# For libxml2, depends on cmake.
+RUN apt install -y python-dev
+ADD libxml2-2.9.12.tar.gz /tmp
+RUN cd /tmp/libxml2-2.9.12 && ./autogen.sh && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
+
+# Cost: 371.5s
+# For libx265, depends on cmake. Note that we force to generate the x265.pc by replace X265_LATEST_TAG.
+#     if(X265_LATEST_TAG)
+#         configure_file("x265.pc.in" "x265.pc" @ONLY)
+ADD x265-3.5_RC2.tar.bz2 /tmp
+# Disable libx265 for ARMv7, because it failed for https://github.com/google/XNNPACK/issues/1465
+#     blockcopy8.S:679: Error: selected processor does not support `usad8 r0,r0,r1' in ARM mode
+RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
+        cd /tmp/x265-3.5_RC2/build/linux && \
+        sed -i 's/^if(X265_LATEST_TAG)/if(TRUE)/g' ../../source/CMakeLists.txt && \
+        cmake -DENABLE_SHARED=OFF ../../source && make -j${JOBS} && make install; \
+    fi
 
