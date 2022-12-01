@@ -19,16 +19,11 @@ jobs:
         with:
           base: 'ubuntu20'
           filters: |
-            base:
-              - 'Dockerfile.base'
-            base2:
-              - 'Dockerfile.base2'
-            base3:
-              - 'Dockerfile.base3'
-            base4:
-              - 'Dockerfile.base4'
-            base5:
-              - 'Dockerfile.base5'
+            base: 'Dockerfile.base'
+            base2: ['Dockerfile.base', 'Dockerfile.base2']
+            base3: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3']
+            base4: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4']
+            base5: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4', 'Dockerfile.base5']
     outputs:
       base: ${{ steps.filter.outputs.base }}
       base2: ${{ steps.filter.outputs.base2 }}
@@ -315,10 +310,11 @@ jobs:
       SRS_DOCKER_BASE5_DONE: ok
 
   docker-prod:
-    name: prod
-    runs-on: ubuntu-20.04
     needs:
+      - check
       - docker-base5
+    if: ${{ always() }}
+    runs-on: ubuntu-20.04
     steps:
       ################################################################
       - name: Checkout repository
