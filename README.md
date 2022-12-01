@@ -16,7 +16,7 @@ Download docker from [here](https://www.docker.com/products/docker-desktop) then
 
 ```
 cd ~/git &&
-git clone https://gitee.com/winlinvip/srs.oschina.git srs && cd srs/trunk && 
+git clone https://gitee.com/ossrs/srs.git srs && cd srs/trunk && 
 git remote set-url origin https://github.com/ossrs/srs.git && git pull
 ```
 
