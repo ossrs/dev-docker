@@ -11,17 +11,14 @@ COPY doc /usr/local/srs/doc
 ############################################################
 FROM centos:7 AS dist
 
-# FFmpeg.
-COPY --from=build /usr/local/bin/ffmpeg4 /usr/local/bin/ffmpeg4
-COPY --from=build /usr/local/bin/ffmpeg5 /usr/local/bin/ffmpeg5
-COPY --from=build /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg5-hevc-over-rtmp
+# Note that we can't do condional copy, because cmake has bin, docs and share files, so we copy the whole /usr/local
+# directory or cmake will fail.
+COPY --from=build /usr/local /usr/local
+# Note that for armv7, the ffmpeg5-hevc-over-rtmp is actually ffmpeg5.
 RUN ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
-COPY --from=build /usr/local/bin/ffprobe /usr/local/bin/ffprobe
-# OpenSSL.
-COPY --from=build /usr/local/ssl /usr/local/ssl
-# For libsrt
-#COPY --from=build /usr/local/include/srt /usr/local/include/srt
-#COPY --from=build /usr/local/lib64 /usr/local/lib64
+# Note that the PATH has /usr/local/bin by default in ubuntu:focal.
+#ENV PATH=$PATH:/usr/local/bin
+
 # FLV demo file.
 COPY --from=build /usr/local/srs/doc /usr/local/srs/doc
 
