@@ -33,7 +33,7 @@ jobs:
 
   docker-base:
     needs: check
-    if: needs.check.outputs.base == 'true'
+    if: ${{ always() && needs.check.outputs.base == 'true' }}
     runs-on: ubuntu-20.04
     steps:
       ################################################################
@@ -89,7 +89,7 @@ jobs:
     needs:
       - docker-base
       - check
-    if: needs.check.outputs.base2 == 'true'
+    if: ${{ always() && needs.check.outputs.base2 == 'true' }}
     runs-on: ubuntu-20.04
     steps:
       ################################################################
@@ -145,7 +145,7 @@ jobs:
     needs:
       - docker-base2
       - check
-    if: needs.check.outputs.base3 == 'true'
+    if: ${{ always() && needs.check.outputs.base3 == 'true' }}
     runs-on: ubuntu-20.04
     steps:
       ################################################################
@@ -201,7 +201,7 @@ jobs:
     needs:
       - docker-base3
       - check
-    if: needs.check.outputs.base4 == 'true'
+    if: ${{ always() && needs.check.outputs.base4 == 'true' }}
     runs-on: ubuntu-20.04
     steps:
       ################################################################
@@ -257,7 +257,7 @@ jobs:
     needs:
       - docker-base4
       - check
-    if: needs.check.outputs.base5 == 'true'
+    if: ${{ always() && needs.check.outputs.base5 == 'true' }}
     runs-on: ubuntu-20.04
     steps:
       ################################################################
