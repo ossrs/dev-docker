@@ -60,8 +60,11 @@ RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM"
 
 WORKDIR /tmp/srs
 
-# Note that we can't do condional copy, so we copy the whole /usr/local directory.
+# Note that we can't do condional copy, because cmake has bin, docs and share files, so we copy the whole /usr/local
+# directory or cmake will fail.
 COPY --from=build /usr/local /usr/local
+# Note that for armv7, the ffmpeg5-hevc-over-rtmp is actually ffmpeg5.
+RUN ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
 # Note that the PATH has /usr/local/bin by default in ubuntu:focal.
 #ENV PATH=$PATH:/usr/local/bin
 
