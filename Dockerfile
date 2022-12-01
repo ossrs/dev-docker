@@ -41,7 +41,7 @@ RUN which cmake && cmake --version
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
 # Build SRS for cache, never install it.
-#     SRS is 2d036c3fd Fix #2747: Support Apple Silicon M1(aarch64). v5.0.41
+#     SRS is 79d096ae9 Merge branch 5.0.98 into develop
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
@@ -64,8 +64,11 @@ RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: 
 
 WORKDIR /tmp/srs
 
-# Note that we can't do condional copy, so we copy the whole /usr/local directory.
+# Note that we can't do condional copy, because cmake has bin, docs and share files, so we copy the whole /usr/local
+# directory or cmake will fail.
 COPY --from=build /usr/local /usr/local
+# Note that for armv7, the ffmpeg5-hevc-over-rtmp is actually ffmpeg5.
+RUN ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
 # Note that the PATH has /usr/local/bin by default in ubuntu:focal.
 #ENV PATH=$PATH:/usr/local/bin
 
