@@ -4,7 +4,7 @@ ARG ARCH
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ossrs/srs:ubuntu20-base4 as build
+FROM ${ARCH}ossrs/srs:ubuntu20-base5 as build
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
