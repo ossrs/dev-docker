@@ -106,22 +106,22 @@ RUN echo "NO_GO: $NO_GO, JOBS: $JOBS"
 
 WORKDIR /tmp/srs
 
-# FFmpeg.
-COPY --from=build /usr/local/bin/ffmpeg4 /usr/local/bin/ffmpeg4
-COPY --from=build /usr/local/bin/ffmpeg5 /usr/local/bin/ffmpeg5
-COPY --from=build /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg5-hevc-over-rtmp
+# Note that we can't do condional copy, because cmake has bin, docs and share files, so we copy the whole /usr/local
+# directory or cmake will fail.
+COPY --from=build /usr/local /usr/local
+# Note that for armv7, the ffmpeg5-hevc-over-rtmp is actually ffmpeg5.
 RUN ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
-COPY --from=build /usr/local/bin/ffprobe /usr/local/bin/ffprobe
-# OpenSSL.
-COPY --from=build /usr/local/ssl /usr/local/ssl
-# For libsrt
-#COPY --from=build /usr/local/include/srt /usr/local/include/srt
-#COPY --from=build /usr/local/lib64 /usr/local/lib64
+# Note that the PATH has /usr/local/bin by default in ubuntu:focal.
+#ENV PATH=$PATH:/usr/local/bin
 
 # Note that git is very important for codecov to discover the .codecov.yml
 RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unzip zip git \
     nasm yasm perf strace sysstat ethtool libtool \
-    tcl cmake
+    tcl
+
+# The cmake should be ready in base image. Use hash to clear cache for cmake,
+# see https://stackoverflow.com/a/46805870/17679565
+RUN which cmake && cmake --version
 
 # For GCP/pprof/gperf, see https://winlin.blog.csdn.net/article/details/53503869
 RUN yum install -y graphviz
@@ -141,9 +141,9 @@ RUN if [[ -z $NO_GO ]]; then \
       rm -f go1.16.12.linux-amd64.tar.gz; \
     fi
 
-# For utest, the gtest.
-ADD googletest-release-1.6.0.tar.gz /usr/local
-RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
+# For utest, the gtest. See https://github.com/google/googletest/releases/tag/release-1.11.0
+ADD googletest-release-1.11.0.tar.gz /usr/local
+RUN ln -sf /usr/local/googletest-release-1.11.0/googletest /usr/local/gtest
 
 # Upgrade to GCC 7 for gtest, see https://stackoverflow.com/a/39731134/17679565
 RUN yum install -y centos-release-scl && yum install -y devtoolset-7-gcc* 
