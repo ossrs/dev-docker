@@ -3,6 +3,9 @@
 #------------------------------------------------------------------------------------
 FROM ossrs/srs:dev as build
 
+ARG JOBS=2
+RUN echo "JOBS: $JOBS"
+
 RUN yum install -y gcc gcc-c++ make patch sudo unzip perl zlib automake libtool \
     zlib-devel bzip2 bzip2-devel libxml2-devel \
     tcl cmake
@@ -21,12 +24,12 @@ RUN which cmake && cmake --version
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
 # Build SRS for cache, never install it.
-#     SRS is 6fa17aa3f ST: Support st_destroy to free resources for asan.
+#     SRS is 79d096ae9 Merge branch 5.0.98 into develop
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
 RUN git clone --depth=1 -b develop https://github.com/ossrs/srs.git
-RUN cd srs/trunk && ./configure && make
+RUN cd srs/trunk && ./configure --jobs=${JOBS} && make -j${JOBS}
 RUN du -sh /usr/local/srs-cache/srs/trunk/*
 
 #------------------------------------------------------------------------------------
@@ -39,8 +42,13 @@ RUN echo "NO_GO: $NO_GO"
 
 WORKDIR /tmp/srs
 
-# Note that we can't do condional copy, so we copy the whole /usr/local directory.
+# Note that we can't do condional copy, because cmake has bin, docs and share files, so we copy the whole /usr/local
+# directory or cmake will fail.
 COPY --from=build /usr/local /usr/local
+# Note that for armv7, the ffmpeg5-hevc-over-rtmp is actually ffmpeg5.
+RUN ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
+# Note that the PATH has /usr/local/bin by default in ubuntu:focal.
+#ENV PATH=$PATH:/usr/local/bin
 
 # Note that git is very important for codecov to discover the .codecov.yml
 RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unzip zip git \
@@ -54,8 +62,8 @@ RUN yum install -y graphviz
 RUN yum install -y libasan
 
 # Install cherrypy for HTTP hooks.
-ADD CherryPy-3.2.4.tar.gz2 /tmp
-RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
+#ADD CherryPy-3.2.4.tar.gz2 /tmp
+#RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
 
 ENV PATH $PATH:/usr/local/go/bin
 RUN if [[ -z $NO_GO ]]; then \
@@ -65,6 +73,6 @@ RUN if [[ -z $NO_GO ]]; then \
       rm -f go1.16.12.linux-amd64.tar.gz; \
     fi
 
-# For utest, the gtest.
-ADD googletest-release-1.6.0.tar.gz /usr/local
-RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
+# For utest, the gtest. See https://github.com/google/googletest/releases/tag/release-1.11.0
+ADD googletest-release-1.11.0.tar.gz /usr/local
+RUN ln -sf /usr/local/googletest-release-1.11.0/googletest /usr/local/gtest
