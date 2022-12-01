@@ -4,6 +4,9 @@
 #------------------------------------------------------------------------------------
 FROM ossrs/srs:dev-gcc7 as build
 
+ARG JOBS=2
+RUN echo "JOBS: $JOBS"
+
 RUN yum install -y gcc gcc-c++ make patch sudo unzip perl zlib automake libtool \
     zlib-devel bzip2 bzip2-devel libxml2-devel \
     tcl cmake
@@ -22,8 +25,8 @@ RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
 RUN git clone --depth=1 -b develop https://github.com/ossrs/srs.git
 WORKDIR /usr/local/srs-cache/srs/trunk
-RUN scl enable devtoolset-7 -- ./configure --sanitizer=off
-RUN scl enable devtoolset-7 -- make
+RUN scl enable devtoolset-7 -- ./configure --jobs=${JOBS} --sanitizer=off
+RUN scl enable devtoolset-7 -- make -j${JOBS}
 RUN du -sh /usr/local/srs-cache/srs/trunk/*
 
 #------------------------------------------------------------------------------------
@@ -33,8 +36,13 @@ FROM centos:7 as dist
 
 WORKDIR /tmp/srs
 
-# Note that we can't do condional copy, so we copy the whole /usr/local directory.
+# Note that we can't do condional copy, because cmake has bin, docs and share files, so we copy the whole /usr/local
+# directory or cmake will fail.
 COPY --from=build /usr/local /usr/local
+# Note that for armv7, the ffmpeg5-hevc-over-rtmp is actually ffmpeg5.
+RUN ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
+# Note that the PATH has /usr/local/bin by default in ubuntu:focal.
+#ENV PATH=$PATH:/usr/local/bin
 
 # Note that git is very important for codecov to discover the .codecov.yml
 RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unzip zip git \
@@ -45,8 +53,8 @@ RUN yum install -y gcc gcc-c++ make net-tools gdb lsof tree dstat redhat-lsb unz
 RUN yum install -y graphviz
 
 # Install cherrypy for HTTP hooks.
-ADD CherryPy-3.2.4.tar.gz2 /tmp
-RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
+#ADD CherryPy-3.2.4.tar.gz2 /tmp
+#RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
 
 ENV PATH $PATH:/usr/local/go/bin
 RUN cd /usr/local && \
@@ -54,9 +62,9 @@ RUN cd /usr/local && \
     tar xf go1.16.12.linux-amd64.tar.gz && \
     rm -f go1.16.12.linux-amd64.tar.gz
 
-# For utest, the gtest.
-ADD googletest-release-1.6.0.tar.gz /usr/local
-RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
+# For utest, the gtest. See https://github.com/google/googletest/releases/tag/release-1.11.0
+ADD googletest-release-1.11.0.tar.gz /usr/local
+RUN ln -sf /usr/local/googletest-release-1.11.0/googletest /usr/local/gtest
 
 # Upgrade to GCC 7 for gtest, see https://stackoverflow.com/a/39731134/17679565
 RUN yum install -y centos-release-scl && yum install -y devtoolset-7-gcc* 
