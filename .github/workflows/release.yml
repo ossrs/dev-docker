@@ -7,13 +7,13 @@ on:
       - 'ubuntu20'
 
 jobs:
-  check:
+  envs:
     runs-on: ubuntu-20.04
     steps:
       ################################################################
-      # Git checkout
       - name: Checkout repository
         uses: actions/checkout@v3
+      ################################################################
       - uses: dorny/paths-filter@v2
         id: filter
         with:
@@ -24,18 +24,34 @@ jobs:
             base3: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3']
             base4: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4']
             base5: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4', 'Dockerfile.base5']
+      ################################################################
+      # The github.ref is, for example, refs/tags/v5.0.145 or refs/tags/v5.0-r8
+      # Generate variables like:
+      #   SRS_TAG=v5.0-r8
+      #   SRS_TAG=v5.0.145
+      # @see https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
+      - name: Generate varaiables
+        run: |
+          SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
+          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
     outputs:
       base: ${{ steps.filter.outputs.base }}
       base2: ${{ steps.filter.outputs.base2 }}
       base3: ${{ steps.filter.outputs.base3 }}
       base4: ${{ steps.filter.outputs.base4 }}
       base5: ${{ steps.filter.outputs.base5 }}
+      SRS_TAG: ${{ env.SRS_TAG }}
 
   docker-base:
-    needs: check
-    if: ${{ always() && needs.check.outputs.base == 'true' }}
+    needs:
+      - envs
+    if: ${{ always() && needs.envs.outputs.base == 'true' }}
     runs-on: ubuntu-20.04
     steps:
+      ################################################################
+      - name: Covert output to env
+        run: |
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -46,17 +62,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      ################################################################
-      # The github.ref is, for example, refs/tags/dev @see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-      # Generate variables like:
-      #   SRS_TAG=dev
-      # @see https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
-      - name: Generate varaiables
-        id: srs-vars
-        run: |
-          SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
-          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+        uses: docker/setup-buildx-action@v2
       ################################################################
       - name: Login docker hub
         uses: docker/login-action@v2
@@ -88,10 +94,14 @@ jobs:
   docker-base2:
     needs:
       - docker-base
-      - check
-    if: ${{ always() && needs.check.outputs.base2 == 'true' }}
+      - envs
+    if: ${{ always() && needs.envs.outputs.base2 == 'true' }}
     runs-on: ubuntu-20.04
     steps:
+      ################################################################
+      - name: Covert output to env
+        run: |
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -102,17 +112,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      ################################################################
-      # The github.ref is, for example, refs/tags/dev @see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-      # Generate variables like:
-      #   SRS_TAG=dev
-      # @see https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
-      - name: Generate varaiables
-        id: srs-vars
-        run: |
-          SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
-          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+        uses: docker/setup-buildx-action@v2
       ################################################################
       - name: Login docker hub
         uses: docker/login-action@v2
@@ -144,10 +144,14 @@ jobs:
   docker-base3:
     needs:
       - docker-base2
-      - check
-    if: ${{ always() && needs.check.outputs.base3 == 'true' }}
+      - envs
+    if: ${{ always() && needs.envs.outputs.base3 == 'true' }}
     runs-on: ubuntu-20.04
     steps:
+      ################################################################
+      - name: Covert output to env
+        run: |
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -158,17 +162,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      ################################################################
-      # The github.ref is, for example, refs/tags/dev @see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-      # Generate variables like:
-      #   SRS_TAG=dev
-      # @see https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
-      - name: Generate varaiables
-        id: srs-vars
-        run: |
-          SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
-          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+        uses: docker/setup-buildx-action@v2
       ################################################################
       - name: Login docker hub
         uses: docker/login-action@v2
@@ -200,10 +194,14 @@ jobs:
   docker-base4:
     needs:
       - docker-base3
-      - check
-    if: ${{ always() && needs.check.outputs.base4 == 'true' }}
+      - envs
+    if: ${{ always() && needs.envs.outputs.base4 == 'true' }}
     runs-on: ubuntu-20.04
     steps:
+      ################################################################
+      - name: Covert output to env
+        run: |
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -214,17 +212,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      ################################################################
-      # The github.ref is, for example, refs/tags/dev @see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-      # Generate variables like:
-      #   SRS_TAG=dev
-      # @see https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
-      - name: Generate varaiables
-        id: srs-vars
-        run: |
-          SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
-          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+        uses: docker/setup-buildx-action@v2
       ################################################################
       - name: Login docker hub
         uses: docker/login-action@v2
@@ -256,10 +244,14 @@ jobs:
   docker-base5:
     needs:
       - docker-base4
-      - check
-    if: ${{ always() && needs.check.outputs.base5 == 'true' }}
+      - envs
+    if: ${{ always() && needs.envs.outputs.base5 == 'true' }}
     runs-on: ubuntu-20.04
     steps:
+      ################################################################
+      - name: Covert output to env
+        run: |
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -270,17 +262,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      ################################################################
-      # The github.ref is, for example, refs/tags/dev @see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-      # Generate variables like:
-      #   SRS_TAG=dev
-      # @see https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
-      - name: Generate varaiables
-        id: srs-vars
-        run: |
-          SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
-          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+        uses: docker/setup-buildx-action@v2
       ################################################################
       - name: Login docker hub
         uses: docker/login-action@v2
@@ -311,11 +293,15 @@ jobs:
 
   docker-prod:
     needs:
-      - check
+      - envs
       - docker-base5
     if: ${{ always() }}
     runs-on: ubuntu-20.04
     steps:
+      ################################################################
+      - name: Covert output to env
+        run: |
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -326,17 +312,7 @@ jobs:
         uses: docker/setup-qemu-action@v1
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      ################################################################
-      # The github.ref is, for example, refs/tags/dev @see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-      # Generate variables like:
-      #   SRS_TAG=dev
-      # @see https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
-      - name: Generate varaiables
-        id: srs-vars
-        run: |
-          SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
-          echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+        uses: docker/setup-buildx-action@v2
       ################################################################
       - name: Login docker hub
         uses: docker/login-action@v2
@@ -348,6 +324,20 @@ jobs:
           docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
             --output "type=image,push=true" \
             -t ossrs/srs:$SRS_TAG .
+    outputs:
+      SRS_DOCKER_PROD_DONE: ok
+
+  docker-aliyun:
+    needs:
+      - envs
+      - docker-prod
+    if: ${{ always() }}
+    runs-on: ubuntu-20.04
+    steps:
+      ################################################################
+      - name: Covert output to env
+        run: |
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Login aliyun hub
         uses: docker/login-action@v2
@@ -362,5 +352,5 @@ jobs:
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}
     outputs:
-      SRS_DOCKER_PROD_DONE: ok
+      SRS_DOCKER_ALIYUN_DONE: ok
 
