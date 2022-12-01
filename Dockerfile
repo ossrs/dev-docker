@@ -155,6 +155,6 @@ RUN apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
     gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
 # Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
-ADD sources.list /etc/apt/sources.list
-RUN apt-get update
+#ADD sources.list /etc/apt/sources.list
+#RUN apt-get update
 
