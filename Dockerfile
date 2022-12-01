@@ -30,7 +30,7 @@ RUN which cmake && cmake --version
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
 # Build SRS for cache, never install it.
-#     SRS is 2d036c3fd Fix #2747: Support Apple Silicon M1(aarch64). v5.0.41
+#     SRS is 79d096ae9 Merge branch 5.0.98 into develop
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 WORKDIR /usr/local/srs-cache
@@ -46,8 +46,13 @@ FROM ubuntu:xenial as dist
 
 WORKDIR /tmp/srs
 
-# Note that we can't do condional copy, so we copy the whole /usr/local directory.
+# Note that we can't do condional copy, because cmake has bin, docs and share files, so we copy the whole /usr/local
+# directory or cmake will fail.
 COPY --from=build /usr/local /usr/local
+# Note that for armv7, the ffmpeg5-hevc-over-rtmp is actually ffmpeg5.
+RUN ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
+# Note that the PATH has /usr/local/bin by default in ubuntu:focal.
+#ENV PATH=$PATH:/usr/local/bin
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
@@ -59,8 +64,8 @@ RUN apt-get update && \
         tcl cmake
 
 # Install cherrypy for HTTP hooks.
-ADD CherryPy-3.2.4.tar.gz2 /tmp
-RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
+#ADD CherryPy-3.2.4.tar.gz2 /tmp
+#RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
 
 ENV PATH $PATH:/usr/local/go/bin
 RUN cd /usr/local && \
@@ -68,15 +73,15 @@ RUN cd /usr/local && \
     tar xf go1.16.12.linux-amd64.tar.gz && \
     rm -f go1.16.12.linux-amd64.tar.gz
 
-# For utest, the gtest.
-ADD googletest-release-1.6.0.tar.gz /usr/local
-RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
+# For utest, the gtest. See https://github.com/google/googletest/releases/tag/release-1.11.0
+ADD googletest-release-1.11.0.tar.gz /usr/local
+RUN ln -sf /usr/local/googletest-release-1.11.0/googletest /usr/local/gtest
 
 # For cross-build: https://github.com/ossrs/srs/wiki/v4_EN_SrsLinuxArm#ubuntu-cross-build-srs
 RUN apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
     gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
 # Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
-ADD sources.list /etc/apt/sources.list
-RUN apt-get update
+#ADD sources.list /etc/apt/sources.list
+#RUN apt-get update
 
