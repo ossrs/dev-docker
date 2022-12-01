@@ -5,6 +5,9 @@
 # http://releases.ubuntu.com/xenial/
 FROM ossrs/srs:ubuntu16 as build
 
+ARG JOBS=2
+RUN echo "JOBS: $JOBS"
+
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
 
