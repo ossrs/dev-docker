@@ -33,7 +33,7 @@ RUN ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
 #ENV PATH=$PATH:/usr/local/bin
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Note that git is very important for codecov to discover the .codecov.yml
 RUN apt update && \
@@ -56,17 +56,17 @@ RUN apt install -y libasan5
 #ADD CherryPy-3.2.4.tar.gz2 /tmp
 #RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
 
-# We already installed go and gtest in /usr/local.
-ENV PATH $PATH:/usr/local/go/bin
-#RUN if [[ -z $NO_GO ]]; then \
-#      cd /usr/local && \
-#      curl -L -O https://go.dev/dl/go1.16.12.linux-amd64.tar.gz && \
-#      tar xf go1.16.12.linux-amd64.tar.gz && \
-#      rm -f go1.16.12.linux-amd64.tar.gz; \
-#    fi
-#
-#ADD googletest-release-1.6.0.tar.gz /usr/local
-#RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
+ENV PATH=$PATH:/usr/local/go/bin
+RUN if [[ -z $NO_GO ]]; then \
+      cd /usr/local && \
+      curl -L -O https://go.dev/dl/go1.16.12.linux-amd64.tar.gz && \
+      tar xf go1.16.12.linux-amd64.tar.gz && \
+      rm -f go1.16.12.linux-amd64.tar.gz; \
+    fi
+
+# For utest, the gtest. See https://github.com/google/googletest/releases/tag/release-1.11.0
+ADD googletest-release-1.11.0.tar.gz /usr/local
+RUN ln -sf /usr/local/googletest-release-1.11.0/googletest /usr/local/gtest
 
 # Install 32bits adapter for crossbuild.
 RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' && $TARGETPLATFORM != 'linux/arm64' ]]; then \
