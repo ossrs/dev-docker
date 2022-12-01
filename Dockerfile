@@ -5,6 +5,9 @@
 # http://releases.ubuntu.com/xenial/
 FROM ossrs/srs:ubuntu16 as build
 
+ARG JOBS=2
+RUN echo "JOBS: $JOBS"
+
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -82,6 +85,6 @@ RUN apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
     gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
 # Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
-ADD sources.list /etc/apt/sources.list
-RUN apt-get update
+#ADD sources.list /etc/apt/sources.list
+#RUN apt-get update
 
