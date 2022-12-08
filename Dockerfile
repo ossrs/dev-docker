@@ -40,7 +40,8 @@ RUN which cmake && cmake --version
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
 # Build SRS for cache, never install it.
-#     SRS is 6fa17aa3f ST: Support st_destroy to free resources for asan.
+#     5.0release b5c2d3524 Script: Discover version from code.
+#     develop    e048437f8 SRS5: Script: Discover version from code.
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 # Note that cygwin build cache files for SRS.

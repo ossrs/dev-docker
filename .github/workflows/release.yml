@@ -51,9 +51,10 @@ jobs:
         shell: C:\cygwin64\bin\bash.exe --login '{0}'
         run: |
           cd $(cygpath -u $SRS_WORKSPACE) &&
-          git clone --depth=1 -b develop https://github.com/ossrs/srs.git &&
+          git clone https://github.com/ossrs/srs.git &&
           pwd && du -sh * && export PATH=/usr/bin:/usr/local/bin &&
-          (cd srs/trunk && ./configure --utest=on && make utest && ./objs/srs_utest) &&
+          (cd srs/trunk && git checkout 5.0release && ./configure --utest=on && make utest && ./objs/srs_utest) &&
+          (cd srs/trunk && git checkout 5.0release && ./configure --utest=on && make utest && ./objs/srs_utest) &&
           tar jcf srs.tar.bz2 srs && pwd && du -sh *
       ##################################################################################################################
       - uses: actions/upload-artifact@v2
