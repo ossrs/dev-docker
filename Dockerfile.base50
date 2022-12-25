@@ -4,7 +4,7 @@ ARG ARCH
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ossrs/srs:ubuntu20-base4 as build
+FROM ${ARCH}ossrs/srs:ubuntu20-base3 as build
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
@@ -53,5 +53,5 @@ RUN FFOPTIONS=""; if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
     make -j${JOBS} && make install && echo "FFmpeg5 build and install successfully"
 RUN cp /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg5 && \
     cp /usr/local/bin/ffprobe /usr/local/bin/ffprobe5
-RUN ls -lh /usr/local/bin/
+RUN ls -lh /usr/local/bin/*
 

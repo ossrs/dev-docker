@@ -4,12 +4,9 @@ ARG ARCH
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ossrs/srs:ubuntu20-base5 as build
-
-ARG BUILDPLATFORM
-ARG TARGETPLATFORM
-ARG JOBS=2
-RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS"
+FROM ${ARCH}ossrs/srs:ubuntu20-base4 as build4
+FROM ${ARCH}ossrs/srs:ubuntu20-base50 as build50
+FROM ${ARCH}ossrs/srs:ubuntu20-base51 as build51
 
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
@@ -24,9 +21,10 @@ RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: 
 
 WORKDIR /tmp/srs
 
-# Note that we can't do condional copy, because cmake has bin, docs and share files, so we copy the whole /usr/local
-# directory or cmake will fail.
-COPY --from=build /usr/local /usr/local
+# Copy all FFmpeg versions and cmake and other tools in /usr/local.
+COPY --from=build51 /usr/local /usr/local
+COPY --from=build4 /usr/local/bin/ffmpeg4 /usr/local/bin/ffprobe4 /usr/local/bin/
+COPY --from=build50 /usr/local/bin/ffmpeg5 /usr/local/bin/ffprobe5 /usr/local/bin/
 # Note that for armv7, the ffmpeg5-hevc-over-rtmp is actually ffmpeg5.
 RUN rm -f /usr/local/bin/ffmpeg && ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
 RUN rm -f /usr/local/bin/ffprobe && ln -sf /usr/local/bin/ffprobe5-hevc-over-rtmp /usr/local/bin/ffprobe

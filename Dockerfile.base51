@@ -4,7 +4,7 @@ ARG ARCH
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ossrs/srs:ubuntu20-base4 as build
+FROM ${ARCH}ossrs/srs:ubuntu20-base3 as build
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
@@ -39,21 +39,22 @@ RUN which cmake && cmake --version
 
 # Cost: 322.0s, no armv7
 # Build FFmpeg for HEVC over RTMP. Note that there is no libx265 for armv7, so no HEVC over RTMP.
+ADD ffmpeg-5.0.2.tar.bz2 /tmp
 ADD ffmpeg_rtmp_h265-5.0.tar.bz2 /tmp
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
+RUN FFOPTIONS=""; if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
         cp -f /tmp/ffmpeg_rtmp_h265-5.0/*.h /tmp/ffmpeg_rtmp_h265-5.0/*.c /tmp/ffmpeg-5.0.2/libavformat && \
-        FFOPTIONS="$FFOPTIONS --enable-libx265" && \
-        cd /tmp/ffmpeg-5.0.2 && ./configure --enable-pthreads --extra-libs=-lpthread \
-            --pkg-config-flags='--static' \
-            --enable-gpl --enable-nonfree \
-            --enable-postproc --enable-bzlib --enable-zlib \
-            --enable-libx264 --enable-libmp3lame --enable-libfdk-aac \
-            --enable-libxml2 --enable-demuxer=dash \
-            --enable-libsrt ${FFOPTIONS} && \
-        make -j${JOBS} && make install && echo "FFMPEG5(HEVC over RTMP) build and install successfully"; \
-    fi
+        FFOPTIONS="$FFOPTIONS --enable-libx265"; \
+    fi; \
+    cd /tmp/ffmpeg-5.0.2 && ./configure --enable-pthreads --extra-libs=-lpthread \
+        --pkg-config-flags='--static' \
+        --enable-gpl --enable-nonfree \
+        --enable-postproc --enable-bzlib --enable-zlib \
+        --enable-libx264 --enable-libmp3lame --enable-libfdk-aac \
+        --enable-libxml2 --enable-demuxer=dash \
+        --enable-libsrt ${FFOPTIONS} && \
+    make -j${JOBS} && make install && echo "FFmpeg5(HEVC over RTMP) build and install successfully"
 #  We copy FFmpeg5 without HEVC over RTMP as target, to make the next step easy to use.
 RUN cp /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg5-hevc-over-rtmp && \
     cp /usr/local/bin/ffprobe /usr/local/bin/ffprobe5-hevc-over-rtmp
-RUN ls -lh /usr/local/bin/
+RUN ls -lh /usr/local/bin/*
 
