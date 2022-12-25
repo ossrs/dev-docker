@@ -28,7 +28,8 @@ WORKDIR /tmp/srs
 # directory or cmake will fail.
 COPY --from=build /usr/local /usr/local
 # Note that for armv7, the ffmpeg5-hevc-over-rtmp is actually ffmpeg5.
-RUN ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
+RUN rm -f /usr/local/bin/ffmpeg && ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
+RUN rm -f /usr/local/bin/ffprobe && ln -sf /usr/local/bin/ffprobe5-hevc-over-rtmp /usr/local/bin/ffprobe
 # Note that the PATH has /usr/local/bin by default in ubuntu:focal.
 #ENV PATH=$PATH:/usr/local/bin
 

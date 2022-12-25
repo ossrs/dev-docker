@@ -20,10 +20,11 @@ jobs:
           base: 'ubuntu20'
           filters: |
             base: 'Dockerfile.base'
-            base2: ['Dockerfile.base', 'Dockerfile.base2']
-            base3: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3']
-            base4: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4']
-            base5: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4', 'Dockerfile.base5']
+            base2:  ['Dockerfile.base', 'Dockerfile.base2']
+            base3:  ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3']
+            base4:  ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4']
+            base50: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base50']
+            base51: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base51']
       ################################################################
       # The github.ref is, for example, refs/tags/v5.0.145 or refs/tags/v5.0-r8
       # Generate variables like:
@@ -39,7 +40,8 @@ jobs:
       base2: ${{ steps.filter.outputs.base2 }}
       base3: ${{ steps.filter.outputs.base3 }}
       base4: ${{ steps.filter.outputs.base4 }}
-      base5: ${{ steps.filter.outputs.base5 }}
+      base50: ${{ steps.filter.outputs.base50 }}
+      base51: ${{ steps.filter.outputs.base51 }}
       SRS_TAG: ${{ env.SRS_TAG }}
 
   docker-base:
@@ -241,11 +243,11 @@ jobs:
     outputs:
       SRS_DOCKER_BASE4_DONE: ok
 
-  docker-base5:
+  docker-base50:
     needs:
-      - docker-base4
+      - docker-base3
       - envs
-    if: ${{ always() && needs.envs.outputs.base5 == 'true' }}
+    if: ${{ always() && needs.envs.outputs.base50 == 'true' }}
     runs-on: ubuntu-20.04
     steps:
       ################################################################
@@ -273,8 +275,8 @@ jobs:
         run: |
           docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
             --output "type=image,push=true" \
-            -t ossrs/srs:${SRS_TAG}-base5 \
-            -f Dockerfile.base5 .
+            -t ossrs/srs:${SRS_TAG}-base50 \
+            -f Dockerfile.base50 .
       ################################################################
       - name: Login aliyun hub
         uses: docker/login-action@v2
@@ -285,16 +287,68 @@ jobs:
       - name: Copy to Aliyun registry
         uses: akhilerm/tag-push-action@v2.1.0
         with:
-          src: ossrs/srs:${{ env.SRS_TAG }}-base5
+          src: ossrs/srs:${{ env.SRS_TAG }}-base50
           dst: |
-            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base5
+            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base50
     outputs:
-      SRS_DOCKER_BASE5_DONE: ok
+      SRS_DOCKER_BASE50_DONE: ok
+
+  docker-base51:
+    needs:
+      - docker-base3
+      - envs
+    if: ${{ always() && needs.envs.outputs.base51 == 'true' }}
+    runs-on: ubuntu-20.04
+    steps:
+      ################################################################
+      - name: Covert output to env
+        run: |
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
+      ################################################################
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      ################################################################
+      # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
+      # https://github.com/docker/setup-qemu-action
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      # https://github.com/docker/setup-buildx-action
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      ################################################################
+      - name: Login docker hub
+        uses: docker/login-action@v2
+        with:
+          username: "${{ secrets.DOCKER_USERNAME }}"
+          password: "${{ secrets.DOCKER_PASSWORD }}"
+      - name: Build and push to docker registry
+        run: |
+          docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
+            --output "type=image,push=true" \
+            -t ossrs/srs:${SRS_TAG}-base51 \
+            -f Dockerfile.base51 .
+      ################################################################
+      - name: Login aliyun hub
+        uses: docker/login-action@v2
+        with:
+          registry: registry.cn-hangzhou.aliyuncs.com
+          username: "${{ secrets.ACR_USERNAME }}"
+          password: "${{ secrets.ACR_PASSWORD }}"
+      - name: Copy to Aliyun registry
+        uses: akhilerm/tag-push-action@v2.1.0
+        with:
+          src: ossrs/srs:${{ env.SRS_TAG }}-base51
+          dst: |
+            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base51
+    outputs:
+      SRS_DOCKER_BASE51_DONE: ok
 
   docker-prod:
     needs:
       - envs
-      - docker-base5
+      - docker-base4
+      - docker-base50
+      - docker-base51
     if: ${{ always() }}
     runs-on: ubuntu-20.04
     steps:
