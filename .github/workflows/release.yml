@@ -36,6 +36,7 @@ jobs:
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
       # See https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/
       - name: Set output
+        id: out
         run: |
           echo "base=${{ steps.filter.outputs.base }}" >> $GITHUB_OUTPUT
           echo "base2=${{ steps.filter.outputs.base2 }}" >> $GITHUB_OUTPUT
@@ -344,7 +345,7 @@ jobs:
       ################################################################
       - name: Covert output to env
         run: |
-          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
+          echo "SRS_TAG=${{ needs.envs.steps.out.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -378,7 +379,7 @@ jobs:
       ################################################################
       - name: Covert output to env
         run: |
-          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
+          echo "SRS_TAG=${{ needs.envs.steps.out.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Login aliyun hub
         uses: docker/login-action@v2
