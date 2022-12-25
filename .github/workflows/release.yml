@@ -34,17 +34,15 @@ jobs:
         run: |
           SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
-      # See https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/
-      - name: Set output
-        id: out
-        run: |
-          echo "base=${{ steps.filter.outputs.base }}" >> $GITHUB_OUTPUT
-          echo "base2=${{ steps.filter.outputs.base2 }}" >> $GITHUB_OUTPUT
-          echo "base3=${{ steps.filter.outputs.base3 }}" >> $GITHUB_OUTPUT
-          echo "base4=${{ steps.filter.outputs.base4 }}" >> $GITHUB_OUTPUT
-          echo "base50=${{ steps.filter.outputs.base50 }}" >> $GITHUB_OUTPUT
-          echo "base51=${{ steps.filter.outputs.base51 }}" >> $GITHUB_OUTPUT
-          echo "SRS_TAG=${{ env.SRS_TAG }}" >> $GITHUB_OUTPUT
+    # Map a step output to a job output, see https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+    outputs:
+      base: ${{ steps.filter.outputs.base }}
+      base2: ${{ steps.filter.outputs.base2 }}
+      base3: ${{ steps.filter.outputs.base3 }}
+      base4: ${{ steps.filter.outputs.base4 }}
+      base50: ${{ steps.filter.outputs.base50 }}
+      base51: ${{ steps.filter.outputs.base51 }}
+      SRS_TAG: ${{ env.SRS_TAG }}
     runs-on: ubuntu-20.04
 
   docker-base:
@@ -379,7 +377,7 @@ jobs:
       ################################################################
       - name: Covert output to env
         run: |
-          echo "SRS_TAG=${{ needs.envs.steps.out.outputs.SRS_TAG }}" >> $GITHUB_ENV
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Login aliyun hub
         uses: docker/login-action@v2
