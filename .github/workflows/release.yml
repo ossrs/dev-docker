@@ -343,7 +343,7 @@ jobs:
       ################################################################
       - name: Covert output to env
         run: |
-          echo "SRS_TAG=${{ needs.envs.steps.out.outputs.SRS_TAG }}" >> $GITHUB_ENV
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
         uses: actions/checkout@v3
