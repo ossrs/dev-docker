@@ -19,15 +19,21 @@ ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/ssl/lib/pkgconfig
 ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig
 
 # Build SRS for cache, never install it.
-#     SRS is 6fa17aa3f ST: Support st_destroy to free resources for asan.
+#     5.0release b5c2d3524 Script: Discover version from code.
+#     develop    e048437f8 SRS5: Script: Discover version from code.
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
-WORKDIR /usr/local/srs-cache
-RUN git clone --depth=1 -b develop https://github.com/ossrs/srs.git
+RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
+# Setup the SRS trunk as workdir.
 WORKDIR /usr/local/srs-cache/srs/trunk
+# Build SRS 5.0
+RUN git checkout 5.0release
 RUN scl enable devtoolset-7 -- ./configure --jobs=${JOBS} --sanitizer=off
 RUN scl enable devtoolset-7 -- make -j${JOBS}
-RUN du -sh /usr/local/srs-cache/srs/trunk/*
+# Build SRS 6.0
+RUN git checkout develop
+RUN scl enable devtoolset-7 -- ./configure --jobs=${JOBS} --sanitizer=off
+RUN scl enable devtoolset-7 -- make -j${JOBS}
 
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
