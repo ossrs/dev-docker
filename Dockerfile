@@ -6,9 +6,10 @@ ARG ARCH
 # http://releases.ubuntu.com/focal/
 FROM ${ARCH}ossrs/srs:ubuntu20 as build
 
+ARG JOBS=2
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
-RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM"
+RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS"
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
@@ -39,14 +40,20 @@ RUN which cmake && cmake --version
 # The ffmpeg and ssl should be ok.
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
+# Depends on git.
+RUN apt-get install -y git gcc
+
 # Build SRS for cache, never install it.
-#     SRS is 79d096ae9 Merge branch 5.0.98 into develop
+#     5.0release b5c2d3524 Script: Discover version from code.
+#     develop    e048437f8 SRS5: Script: Discover version from code.
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
-WORKDIR /usr/local/srs-cache
-RUN apt-get install -y git && git clone --depth=1 -b develop https://github.com/ossrs/srs.git
-RUN cd srs/trunk && ./configure && make
-RUN du -sh /usr/local/srs-cache/srs/trunk/*
+RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
+# Setup the SRS trunk as workdir.
+WORKDIR /usr/local/srs-cache/srs/trunk
+RUN git checkout 5.0release && ./configure --jobs=${JOBS} && make -j${JOBS}
+RUN git checkout develop && ./configure --jobs=${JOBS} && make -j${JOBS}
+RUN du -sh /usr/local/srs-cache/srs/trunk/objs/*
 
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
