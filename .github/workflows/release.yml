@@ -13,7 +13,7 @@ jobs:
     steps:
       # Git checkout
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       # The github.ref is, for example, refs/tags/v5.0.145 or refs/tags/v5.0-r8
       # Generate variables like:
       #   SRS_TAG=v5.0-r8
@@ -42,7 +42,7 @@ jobs:
           install-dir: C:\cygwin64
       ##################################################################################################################
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       ##################################################################################################################
       - name: Build and test SRS
         env:
@@ -52,12 +52,12 @@ jobs:
         run: |
           cd $(cygpath -u $SRS_WORKSPACE) &&
           git clone https://github.com/ossrs/srs.git &&
-          pwd && du -sh * && export PATH=/usr/bin:/usr/local/bin &&
+          pwd && du -sh * && export PATH=$PATH:/usr/bin:/usr/local/bin &&
           (cd srs/trunk && git checkout 5.0release && ./configure --utest=on && make utest && ./objs/srs_utest) &&
-          (cd srs/trunk && git checkout 5.0release && ./configure --utest=on && make utest && ./objs/srs_utest) &&
+          (cd srs/trunk && git checkout develop && ./configure --utest=on && make utest && ./objs/srs_utest) &&
           tar jcf srs.tar.bz2 srs && pwd && du -sh *
       ##################################################################################################################
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: srs-cache
           path: srs.tar.bz2
@@ -78,12 +78,12 @@ jobs:
           echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ##################################################################################################################
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       ##################################################################################################################
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: srs-cache
-      - uses: geekyeggo/delete-artifact@v2
+      - uses: geekyeggo/delete-artifact@v3
         with:
           name: srs-cache
       ##################################################################################################################
