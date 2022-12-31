@@ -96,7 +96,7 @@ RUN which cmake && cmake --version
 #RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
 
 # We already installed go and gtest in /usr/local.
-#ENV PATH $PATH:/usr/local/go/bin
+ENV PATH $PATH:/usr/local/go/bin
 #RUN if [[ -z $NO_GO ]]; then \
 #      cd /usr/local && \
 #      curl -L -O https://go.dev/dl/go1.16.12.linux-amd64.tar.gz && \
