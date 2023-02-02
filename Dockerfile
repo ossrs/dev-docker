@@ -63,6 +63,10 @@ RUN if [[ $TARGETARCH == 'amd64' ]]; then \
 RUN if [[ $TARGETARCH == 'arm64' ]]; then \
       curl -L https://go.dev/dl/go1.16.15.linux-arm64.tar.gz |tar -xz -C /usr/local; \
     fi
+# For linux/arm/v7, because ARMv6 is upwardly compatible with ARMv7.
+RUN if [[ $TARGETARCH == 'arm' ]]; then \
+      curl -L https://go.dev/dl/go1.16.15.linux-armv6l.tar.gz |tar -xz -C /usr/local; \
+    fi
 
 # For utest, the gtest. See https://github.com/google/googletest/releases/tag/release-1.11.0
 ADD googletest-release-1.11.0.tar.gz /usr/local
