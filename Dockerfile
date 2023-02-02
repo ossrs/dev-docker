@@ -16,8 +16,9 @@ FROM ${ARCH}ubuntu:focal as dist
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
+ARG TARGETARCH
 ARG JOBS=2
-RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS"
+RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, TARGETARCH: $TARGETARCH JOBS: $JOBS"
 
 WORKDIR /tmp/srs
 
@@ -56,11 +57,11 @@ RUN apt install -y libasan5
 #RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
 
 ENV PATH=$PATH:/usr/local/go/bin
-RUN if [[ -z $NO_GO ]]; then \
-      cd /usr/local && \
-      curl -L -O https://go.dev/dl/go1.16.12.linux-amd64.tar.gz && \
-      tar xf go1.16.12.linux-amd64.tar.gz && \
-      rm -f go1.16.12.linux-amd64.tar.gz; \
+RUN if [[ $TARGETARCH == 'amd64' ]]; then \
+      curl -L https://go.dev/dl/go1.16.12.linux-amd64.tar.gz |tar -xz -C /usr/local; \
+    fi
+RUN if [[ $TARGETARCH == 'arm64' ]]; then \
+      curl -L https://go.dev/dl/go1.16.15.linux-arm64.tar.gz |tar -xz -C /usr/local; \
     fi
 
 # For utest, the gtest. See https://github.com/google/googletest/releases/tag/release-1.11.0
@@ -68,12 +69,12 @@ ADD googletest-release-1.11.0.tar.gz /usr/local
 RUN ln -sf /usr/local/googletest-release-1.11.0/googletest /usr/local/gtest
 
 # Install 32bits adapter for crossbuild.
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' && $TARGETPLATFORM != 'linux/arm64' ]]; then \
+RUN if [[ $TARGETARCH != 'arm' && $TARGETARCH != 'arm64' ]]; then \
         apt-get -y install lib32z1-dev; \
     fi
 
 # For cross-build: https://github.com/ossrs/srs/wiki/v4_EN_SrsLinuxArm#ubuntu-cross-build-srs
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' && $TARGETPLATFORM != 'linux/arm64' ]]; then \
+RUN if [[ $TARGETARCH != 'arm' && $TARGETARCH != 'arm64' ]]; then \
         apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu; \
     fi
