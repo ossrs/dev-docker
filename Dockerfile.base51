@@ -51,6 +51,7 @@ RUN FFOPTIONS=""; if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
         --enable-postproc --enable-bzlib --enable-zlib \
         --enable-libx264 --enable-libmp3lame --enable-libfdk-aac \
         --enable-libxml2 --enable-demuxer=dash \
+        --enable-openssl --enable-protocol=tls --enable-protocol=rtmps \
         --enable-libsrt ${FFOPTIONS} && \
     make -j${JOBS} && make install && echo "FFmpeg5(HEVC over RTMP) build and install successfully"
 #  We copy FFmpeg5 without HEVC over RTMP as target, to make the next step easy to use.

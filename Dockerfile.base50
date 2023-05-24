@@ -49,6 +49,7 @@ RUN FFOPTIONS=""; if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
         --enable-postproc --enable-bzlib --enable-zlib \
         --enable-libx264 --enable-libmp3lame --enable-libfdk-aac \
         --enable-libxml2 --enable-demuxer=dash \
+        --enable-openssl --enable-protocol=tls --enable-protocol=rtmps \
         --enable-libsrt ${FFOPTIONS} && \
     make -j${JOBS} && make install && echo "FFmpeg5 build and install successfully"
 RUN cp /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg5 && \

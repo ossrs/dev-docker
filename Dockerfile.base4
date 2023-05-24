@@ -45,6 +45,7 @@ RUN cd /tmp/ffmpeg-4.2.1 && ./configure --enable-pthreads --extra-libs=-lpthread
         --enable-postproc --enable-bzlib --enable-zlib \
         --enable-libx264 --enable-libmp3lame --enable-libfdk-aac \
         --enable-libxml2 --enable-demuxer=dash \
+        --enable-openssl --enable-protocol=tls --enable-protocol=rtmps \
         --enable-libsrt --pkg-config-flags='--static' && \
     make -j${JOBS} && make install && echo "FFmpeg4 build and install successfully"
 RUN cp /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg4 && \
