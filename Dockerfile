@@ -101,9 +101,9 @@ RUN which cmake && cmake --version
 #ENV PATH $PATH:/usr/local/go/bin
 #RUN if [[ -z $NO_GO ]]; then \
 #      cd /usr/local && \
-#      curl -L -O https://go.dev/dl/go1.16.12.linux-amd64.tar.gz && \
-#      tar xf go1.16.12.linux-amd64.tar.gz && \
-#      rm -f go1.16.12.linux-amd64.tar.gz; \
+#      curl -L -O https://go.dev/dl/go1.18.10.linux-amd64.tar.gz && \
+#      tar xf go1.18.10.linux-amd64.tar.gz && \
+#      rm -f go1.18.10.linux-amd64.tar.gz; \
 #    fi
 #
 #ADD googletest-release-1.6.0.tar.gz /usr/local
