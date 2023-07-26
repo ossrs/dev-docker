@@ -25,9 +25,8 @@ jobs:
         run: |
           SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
-          echo "::set-output name=SRS_TAG::${SRS_TAG}"
     outputs:
-      SRS_TAG: ${{ steps.srs-vars.outputs.SRS_TAG }}
+      SRS_TAG: ${{ env.SRS_TAG }}
 
   docker-prod:
     runs-on: ubuntu-20.04
@@ -46,6 +45,9 @@ jobs:
       - name: Remove unnecessary files
         run: |
           df -h
+          echo ""
+          echo "After removed some unused files."
+          echo ""
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
             /usr/local/share/powershell /usr/share/swift /usr/lib/jvm
           df -h
