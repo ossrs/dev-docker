@@ -43,6 +43,12 @@ jobs:
       # Git checkout
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: Remove unnecessary files
+        run: |
+          df -h
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+            /usr/local/share/powershell /usr/share/swift /usr/lib/jvm
+          df -h
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU

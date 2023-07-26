@@ -55,6 +55,16 @@ RUN git checkout 5.0release && ./configure --jobs=${JOBS} && make -j${JOBS}
 RUN git checkout develop && ./configure --jobs=${JOBS} && make -j${JOBS}
 RUN du -sh /usr/local/srs-cache/srs/trunk/objs/*
 
+# To avoid the error: no space left on device
+RUN df -h && \
+    echo "Remove the git and build tools." && \
+    rm -rf /usr/local/srs-cache/srs/.git && \
+    echo "Remove the build tools." && \
+    apt-get remove -y aptitude gcc g++ make patch unzip python \
+        autoconf automake libtool pkg-config libxml2-dev zlib1g-dev \
+        liblzma-dev libzip-dev libbz2-dev tcl && \
+    df -h
+
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
 #------------------------------------------------------------------------------------
