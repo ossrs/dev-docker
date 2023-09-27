@@ -19,8 +19,8 @@ ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/ssl/lib/pkgconfig
 ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig
 
 # Build SRS for cache, never install it.
-#     5.0release c7851da46 API: Fix HTTPS callback issue using SNI in TLS client handshake. v5.0.168 (#3695)
-#     develop    b5f50f3bf API: Fix HTTPS callback issue using SNI in TLS client handshake. v4.0.270, v5.0.168, v6.0.61 (#3695)
+#     5.0release 3ddacdb47 Build: Support sys-ssl for srt. v5.0.184 (#3806)
+#     develop    ca155a5b5 Turn off the related utests H265 option. v6.0.85 (#3811)
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
