@@ -4,7 +4,7 @@ name: "Release"
 on:
   push:
     branches:
-      - 'ubuntu20-cross-arm'
+      - 'ubuntu20-cache-cross-arm'
 
 jobs:
   env-prod:
