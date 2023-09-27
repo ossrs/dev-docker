@@ -40,6 +40,9 @@ RUN which cmake && cmake --version
 # The ffmpeg and ssl should be ok.
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
+# Depends on git.
+RUN apt-get install -y git gcc
+
 # Build SRS for cache, never install it.
 #     5.0release 3ddacdb47 Build: Support sys-ssl for srt. v5.0.184 (#3806)
 #     develop    ca155a5b5 Turn off the related utests H265 option. v6.0.85 (#3811)
