@@ -4,7 +4,7 @@ name: "Release"
 on:
   push:
     branches:
-      - 'ubuntu16-cross-aarch64'
+      - 'ubuntu16-cache-cross-aarch64'
 
 jobs:
   envs:
