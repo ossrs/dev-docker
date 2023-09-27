@@ -32,14 +32,20 @@ RUN which cmake && cmake --version
 # The ffmpeg and ssl should be ok.
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
+# Depends on git.
+RUN apt-get install -y git gcc
+
 # Build SRS for cache, never install it.
-#     SRS is 79d096ae9 Merge branch 5.0.98 into develop
+#     5.0release 3ddacdb47 Build: Support sys-ssl for srt. v5.0.184 (#3806)
+#     develop    ca155a5b5 Turn off the related utests H265 option. v6.0.85 (#3811)
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
-WORKDIR /usr/local/srs-cache
-RUN apt-get install -y git && git clone --depth=1 -b develop https://github.com/ossrs/srs.git
-RUN cd srs/trunk && ./configure --jobs=${JOBS} --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS}
-RUN du -sh /usr/local/srs-cache/srs/trunk/*
+RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
+# Setup the SRS trunk as workdir.
+WORKDIR /usr/local/srs-cache/srs/trunk
+RUN git checkout 5.0release && ./configure --jobs=${JOBS} --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS}
+RUN git checkout develop && ./configure --jobs=${JOBS} --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS}
+RUN du -sh /usr/local/srs-cache/srs/trunk/objs/*
 
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
