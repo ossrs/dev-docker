@@ -40,8 +40,8 @@ RUN which cmake && cmake --version
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
 # Build SRS for cache, never install it.
-#     5.0release c7851da46 API: Fix HTTPS callback issue using SNI in TLS client handshake. v5.0.168 (#3695)
-#     develop    b5f50f3bf API: Fix HTTPS callback issue using SNI in TLS client handshake. v4.0.270, v5.0.168, v6.0.61 (#3695)
+#     5.0release 3ddacdb47 Build: Support sys-ssl for srt. v5.0.184 (#3806)
+#     develop    ca155a5b5 Turn off the related utests H265 option. v6.0.85 (#3811)
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 # Note that cygwin build cache files for SRS.
