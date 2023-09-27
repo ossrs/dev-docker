@@ -8,8 +8,9 @@ FROM ${ARCH}ossrs/srs:ubuntu20 as build
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
+ARG TARGETARCH
 ARG JOBS=2
-RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS"
+RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, TARGETARCH: $TARGETARCH, JOBS: $JOBS"
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
@@ -51,8 +52,10 @@ RUN mkdir -p /usr/local/srs-cache
 RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
 # Setup the SRS trunk as workdir.
 WORKDIR /usr/local/srs-cache/srs/trunk
-RUN git checkout 5.0release && ./configure --jobs=${JOBS} --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS}
-RUN git checkout develop && ./configure --jobs=${JOBS} --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS}
+RUN if [[ $TARGETARCH == 'amd64' ]]; then \
+      git checkout 5.0release && ./configure --jobs=${JOBS} --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS} && \
+      git checkout develop && ./configure --jobs=${JOBS} --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS}; \
+    fi
 RUN du -sh /usr/local/srs-cache/srs/trunk/objs/*
 
 #------------------------------------------------------------------------------------
