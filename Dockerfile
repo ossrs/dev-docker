@@ -8,8 +8,9 @@ FROM ${ARCH}ossrs/srs:ubuntu20 as build
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
+ARG TARGETARCH
 ARG JOBS=2
-RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS"
+RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, TARGETARCH: $TARGETARCH, JOBS: $JOBS"
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
 ENV DEBIAN_FRONTEND noninteractive
@@ -51,8 +52,10 @@ RUN mkdir -p /usr/local/srs-cache
 RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
 # Setup the SRS trunk as workdir.
 WORKDIR /usr/local/srs-cache/srs/trunk
-RUN git checkout 5.0release && ./configure --jobs=${JOBS} --cross-build --cross-prefix=aarch64-linux-gnu- && make -j${JOBS}
-RUN git checkout develop && ./configure --jobs=${JOBS} --cross-build --cross-prefix=aarch64-linux-gnu- && make -j${JOBS}
+RUN if [[ $TARGETARCH != 'arm' && $TARGETARCH != 'arm64' ]]; then \
+      git checkout 5.0release && ./configure --jobs=${JOBS} --cross-build --cross-prefix=aarch64-linux-gnu- && make -j${JOBS} && \
+      git checkout develop && ./configure --jobs=${JOBS} --cross-build --cross-prefix=aarch64-linux-gnu- && make -j${JOBS}; \
+    fi
 RUN du -sh /usr/local/srs-cache/srs/trunk/objs/*
 
 #------------------------------------------------------------------------------------
@@ -63,8 +66,9 @@ FROM ${ARCH}ubuntu:focal as dist
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
+ARG TARGETARCH
 ARG JOBS=2
-RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS"
+RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, TARGETARCH: $TARGETARCH, JOBS: $JOBS"
 
 WORKDIR /tmp/srs
 
@@ -114,12 +118,12 @@ RUN which cmake && cmake --version
 #RUN ln -sf /usr/local/googletest-release-1.6.0 /usr/local/gtest
 
 # Install 32bits adapter for crossbuild.
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' && $TARGETPLATFORM != 'linux/arm64' ]]; then \
+RUN if [[ $TARGETARCH != 'arm' && $TARGETARCH != 'arm64' ]]; then \
         apt-get -y install lib32z1-dev; \
     fi
 
 # For cross-build: https://github.com/ossrs/srs/wiki/v4_EN_SrsLinuxArm#ubuntu-cross-build-srs
-RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' && $TARGETPLATFORM != 'linux/arm64/v8' && $TARGETPLATFORM != 'linux/arm64' ]]; then \
+RUN if [[ $TARGETARCH != 'arm' && $TARGETARCH != 'arm64' ]]; then \
       apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
         gcc-aarch64-linux-gnu g++-aarch64-linux-gnu; \
     fi
