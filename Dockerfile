@@ -45,8 +45,8 @@ RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 RUN apt-get install -y git gcc
 
 # Build SRS for cache, never install it.
-#     5.0release 268bac58b RTC: Fix FFmpeg opus audio noisy issue. v5.0.195 (#3845)
-#     develop    9238f09b0 RTC: Fix FFmpeg opus audio noisy issue. v5.0.195 v6.0.95 (#3845)
+#     5.0release f1db76011 RTC: Refine FFmpeg opus audio noisy issue. v5.0.197 (#3852)
+#     develop    b8734cb46 Disable ffmpeg-opus by default. v6.0.97
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
