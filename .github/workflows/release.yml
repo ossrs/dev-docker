@@ -33,12 +33,6 @@ jobs:
         run: |
           echo "Release ossrs/srs:$SRS_TAG"
           docker build --tag ossrs/srs:$SRS_TAG .
-      - name: Copy to docker registry
-        uses: akhilerm/tag-push-action@v2.1.0
-        with:
-          src: ossrs/srs:${{ env.SRS_TAG }}
-          dst: |
-            ossrs/srs:${{ env.SRS_TAG_DATE }}
 
       ################################################################
       # Docker
@@ -50,6 +44,12 @@ jobs:
       - name: Push to docker hub
         run: |
           docker push ossrs/srs:$SRS_TAG
+      - name: Copy to docker registry
+        uses: akhilerm/tag-push-action@v2.1.0
+        with:
+          src: ossrs/srs:${{ env.SRS_TAG }}
+          dst: |
+            ossrs/srs:${{ env.SRS_TAG_DATE }}
       ################################################################
       - name: Login aliyun hub
         uses: docker/login-action@v2
