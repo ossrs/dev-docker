@@ -54,7 +54,7 @@ jobs:
           git clone https://github.com/ossrs/srs.git &&
           pwd && du -sh * && export PATH=$PATH:/usr/bin:/usr/local/bin &&
           (cd srs/trunk && git checkout 5.0release && ./configure --utest=on && make utest && ./objs/srs_utest) &&
-          (cd srs/trunk && git checkout develop && ./configure --utest=on && make utest && ./objs/srs_utest) &&
+          (cd srs/trunk && git checkout develop && ./configure --utest=on --ffmpeg-opus=on && make utest && ./objs/srs_utest) &&
           tar jcf srs.tar.bz2 srs && pwd && du -sh *
       ##################################################################################################################
       - uses: actions/upload-artifact@v3

@@ -40,11 +40,12 @@ RUN which cmake && cmake --version
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
 # Build SRS for cache, never install it.
-#     5.0release f1db76011 RTC: Refine FFmpeg opus audio noisy issue. v5.0.197 (#3852)
-#     develop    b8734cb46 Disable ffmpeg-opus by default. v6.0.97
+#     5.0release 316f4641a Don't compile libopus when enable sys-ffmpeg. v5.0.198 (#3851)
+#     develop    4372e32f7 Don't compile libopus when enable sys-ffmpeg. v5.0.198 v6.0.98 (#3851)
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
-# Note that cygwin build cache files for SRS.
+# Note that cygwin build cache files for SRS in .github/workflows/release.yml file.
+#     ./configure --utest=on
 ADD srs.tar.bz2 /usr/local/srs-cache
 RUN ls -lh /usr/local/srs-cache && \
     ls -lh /usr/local/srs-cache/srs && \
