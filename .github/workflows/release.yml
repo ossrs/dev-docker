@@ -38,7 +38,7 @@ jobs:
         run: |
           SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
-          echo "SRS_TAG_DATE=$SRS_TAG$(date +%y-%m-%d)" >> $GITHUB_ENV
+          echo "SRS_TAG_DATE=${{ needs.envs.outputs.SRS_TAG }}-$(date +%y-%m-%d)" >> $GITHUB_ENV
       ################################################################
       # Git checkout
       - name: Checkout repository
@@ -92,7 +92,7 @@ jobs:
         run: |
           SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
-          echo "SRS_TAG_DATE=$SRS_TAG$(date +%y-%m-%d)" >> $GITHUB_ENV
+          echo "SRS_TAG_DATE=${{ needs.envs.outputs.SRS_TAG }}-$(date +%y-%m-%d)" >> $GITHUB_ENV
       ################################################################
       # Aliyun ACR
       - name: Login aliyun hub
