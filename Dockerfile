@@ -83,9 +83,9 @@ RUN apt-get update && \
 
 ENV PATH $PATH:/usr/local/go/bin
 RUN cd /usr/local && \
-    curl -L -O https://go.dev/dl/go1.16.12.linux-amd64.tar.gz && \
-    tar xf go1.16.12.linux-amd64.tar.gz && \
-    rm -f go1.16.12.linux-amd64.tar.gz
+    curl -L -O https://go.dev/dl/go1.18.10.linux-amd64.tar.gz && \
+    tar xf go1.18.10.linux-amd64.tar.gz && \
+    rm -f go1.18.10.linux-amd64.tar.gz
 
 # For utest, the gtest. See https://github.com/google/googletest/releases/tag/release-1.11.0
 ADD googletest-release-1.11.0.tar.gz /usr/local
