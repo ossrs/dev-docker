@@ -27,6 +27,9 @@ jobs:
         run: |
           SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+      - name: Covert output to env
+        run: |
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
           echo "SRS_TAG_DATE=${{ needs.envs.outputs.SRS_TAG }}-$(date +%y-%m-%d)" >> $GITHUB_ENV
       # Build SRS image
       - name: Build SRS docker image
