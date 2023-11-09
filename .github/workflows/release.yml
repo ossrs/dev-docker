@@ -38,6 +38,7 @@ jobs:
         run: |
           SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+          echo "SRS_TAG_DATE=$SRS_TAG$(date +%y-%m-%d)" >> $GITHUB_ENV
       ################################################################
       # Git checkout
       - name: Checkout repository
@@ -70,6 +71,12 @@ jobs:
           docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
             --output "type=image,push=true" \
             -t ossrs/srs:$SRS_TAG .
+      - name: Copy to docker registry
+        uses: akhilerm/tag-push-action@v2.1.0
+        with:
+          src: ossrs/srs:${{ env.SRS_TAG }}
+          dst: |
+            ossrs/srs:${{ env.SRS_TAG_DATE }}
     outputs:
       SRS_DOCKER_PROD_DONE: ok
 
@@ -85,6 +92,7 @@ jobs:
         run: |
           SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+          echo "SRS_TAG_DATE=$SRS_TAG$(date +%y-%m-%d)" >> $GITHUB_ENV
       ################################################################
       # Aliyun ACR
       - name: Login aliyun hub
@@ -99,6 +107,7 @@ jobs:
           src: ossrs/srs:${{ env.SRS_TAG }}
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}
+            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG_DATE }}
     outputs:
       SRS_ALIYUN_PROD_DONE: ok
 
