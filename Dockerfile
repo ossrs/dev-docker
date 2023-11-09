@@ -45,8 +45,8 @@ RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 RUN apt-get install -y git gcc
 
 # Build SRS for cache, never install it.
-#     5.0release f1db76011 RTC: Refine FFmpeg opus audio noisy issue. v5.0.197 (#3852)
-#     develop    b8734cb46 Disable ffmpeg-opus by default. v6.0.97
+#     5.0release 316f4641a Don't compile libopus when enable sys-ffmpeg. v5.0.198 (#3851)
+#     develop    4372e32f7 Don't compile libopus when enable sys-ffmpeg. v5.0.198 v6.0.98 (#3851)
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
@@ -54,7 +54,7 @@ RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
 WORKDIR /usr/local/srs-cache/srs/trunk
 RUN if [[ $TARGETARCH != 'arm' && $TARGETARCH != 'arm64' ]]; then \
       git checkout 5.0release && ./configure --jobs=${JOBS} --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS} && \
-      git checkout develop && ./configure --jobs=${JOBS} --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS}; \
+      git checkout develop && ./configure --jobs=${JOBS} --ffmpeg-opus=on --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS}; \
     fi
 RUN du -sh /usr/local/srs-cache/srs/trunk/objs/*
 
