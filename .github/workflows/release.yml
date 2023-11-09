@@ -27,11 +27,18 @@ jobs:
         run: |
           SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+          echo "SRS_TAG_DATE=${{ needs.envs.outputs.SRS_TAG }}-$(date +%y-%m-%d)" >> $GITHUB_ENV
       # Build SRS image
       - name: Build SRS docker image
         run: |
           echo "Release ossrs/srs:$SRS_TAG"
           docker build --tag ossrs/srs:$SRS_TAG .
+      - name: Copy to docker registry
+        uses: akhilerm/tag-push-action@v2.1.0
+        with:
+          src: ossrs/srs:${{ env.SRS_TAG }}
+          dst: |
+            ossrs/srs:${{ env.SRS_TAG_DATE }}
 
       ################################################################
       # Docker
@@ -56,4 +63,5 @@ jobs:
           src: ossrs/srs:${{ env.SRS_TAG }}
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}
+            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG_DATE }}
 
