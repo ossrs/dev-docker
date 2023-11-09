@@ -7,17 +7,11 @@ on:
       - 'ubuntu18'
 
 jobs:
-  docker:
-    name: release-docker
-    runs-on: ubuntu-20.04
-
+  envs:
     steps:
       ################################################################
-      # Git checkout
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      ################################################################
       # Build
       # The github.ref is, for example, refs/tags/dev @see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
       # Generate variables like:
@@ -27,6 +21,23 @@ jobs:
         run: |
           SRS_TAG=$(echo ${{ github.ref }}| awk -F '/' '{print $3}')
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
+    # Map a step output to a job output, see https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+    outputs:
+      SRS_TAG: ${{ env.SRS_TAG }}
+    runs-on: ubuntu-20.04
+
+  docker:
+    name: release-docker
+    runs-on: ubuntu-20.04
+    needs:
+      - envs
+    steps:
+      ################################################################
+      # Git checkout
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      ################################################################
       - name: Covert output to env
         run: |
           echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
