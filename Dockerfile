@@ -19,8 +19,8 @@ ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/ssl/lib/pkgconfig
 ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig
 
 # Build SRS for cache, never install it.
-#     5.0release f1db76011 RTC: Refine FFmpeg opus audio noisy issue. v5.0.197 (#3852)
-#     develop    b8734cb46 Disable ffmpeg-opus by default. v6.0.97
+#     5.0release 316f4641a Don't compile libopus when enable sys-ffmpeg. v5.0.198 (#3851)
+#     develop    4372e32f7 Don't compile libopus when enable sys-ffmpeg. v5.0.198 v6.0.98 (#3851)
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
@@ -32,7 +32,7 @@ RUN scl enable devtoolset-7 -- ./configure --jobs=${JOBS} --sanitizer=off
 RUN scl enable devtoolset-7 -- make -j${JOBS}
 # Build SRS 6.0
 RUN git checkout develop
-RUN scl enable devtoolset-7 -- ./configure --jobs=${JOBS} --sanitizer=off
+RUN scl enable devtoolset-7 -- ./configure --jobs=${JOBS} --sanitizer=off --ffmpeg-opus=on
 RUN scl enable devtoolset-7 -- make -j${JOBS}
 
 #------------------------------------------------------------------------------------
