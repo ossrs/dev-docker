@@ -7,7 +7,7 @@ on:
       - 'ubuntu20-cache'
 
 jobs:
-  env-prod:
+  envs:
     runs-on: ubuntu-20.04
     steps:
       ################################################################
@@ -31,12 +31,12 @@ jobs:
   docker-prod:
     runs-on: ubuntu-20.04
     needs:
-      - env-prod
+      - envs
     steps:
       ################################################################
       - name: Covert output to env
         run: |
-          SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
+          SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
       ################################################################
       # Git checkout
@@ -61,7 +61,7 @@ jobs:
       ################################################################
       - name: Covert output to env
         run: |
-          SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
+          SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
           echo "SRS_TAG_DATE=${{ needs.envs.outputs.SRS_TAG }}-$(date +%y-%m-%d)" >> $GITHUB_ENV
       # Docker
@@ -88,13 +88,13 @@ jobs:
     name: for aliyun
     runs-on: ubuntu-20.04
     needs:
-      - env-prod
+      - envs
       - docker-prod
     steps:
       ################################################################
       - name: Covert output to env
         run: |
-          SRS_TAG=${{ needs.env-prod.outputs.SRS_TAG }}
+          SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}
           echo "SRS_TAG=$SRS_TAG" >> $GITHUB_ENV
           echo "SRS_TAG_DATE=${{ needs.envs.outputs.SRS_TAG }}-$(date +%y-%m-%d)" >> $GITHUB_ENV
       ################################################################
