@@ -32,7 +32,7 @@ RUN scl enable devtoolset-7 -- ./configure --jobs=${JOBS} --sanitizer=off
 RUN scl enable devtoolset-7 -- make -j${JOBS}
 # Build SRS 6.0
 RUN git checkout develop
-RUN scl enable devtoolset-7 -- ./configure --jobs=${JOBS} --sanitizer=off --ffmpeg-opus=on
+RUN scl enable devtoolset-7 -- ./configure --jobs=${JOBS} --sanitizer=off --ffmpeg-opus=off
 RUN scl enable devtoolset-7 -- make -j${JOBS}
 
 #------------------------------------------------------------------------------------
