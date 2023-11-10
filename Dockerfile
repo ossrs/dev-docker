@@ -54,7 +54,7 @@ RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
 WORKDIR /usr/local/srs-cache/srs/trunk
 RUN if [[ $TARGETARCH != 'arm' && $TARGETARCH != 'arm64' ]]; then \
       git checkout 5.0release && ./configure --jobs=${JOBS} --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS} && \
-      git checkout develop && ./configure --jobs=${JOBS} --ffmpeg-opus=on --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS}; \
+      git checkout develop && ./configure --jobs=${JOBS} --ffmpeg-opus=off --cross-build --cross-prefix=arm-linux-gnueabihf- && make -j${JOBS}; \
     fi
 RUN du -sh /usr/local/srs-cache/srs/trunk/objs/*
 
