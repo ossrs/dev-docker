@@ -44,7 +44,7 @@ RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
 # Setup the SRS trunk as workdir.
 WORKDIR /usr/local/srs-cache/srs/trunk
 RUN git checkout 5.0release && ./configure --jobs=${JOBS} && make -j${JOBS}
-RUN git checkout develop && ./configure --jobs=${JOBS} --ffmpeg-opus=on && make -j${JOBS}
+RUN git checkout develop && ./configure --jobs=${JOBS} --ffmpeg-opus=off && make -j${JOBS}
 RUN du -sh /usr/local/srs-cache/srs/trunk/objs/*
 
 #------------------------------------------------------------------------------------
