@@ -21,9 +21,9 @@ RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, TARGET
 WORKDIR /tmp/srs
 
 # See https://fonts.google.com/noto/specimen/Noto+Sans+TC
-ADD NotoSansTC-Regular.tar.bz2 /usr/local/share/fonts/
+ADD NotoSansTC-Regular.ttf /usr/local/share/fonts/
 # See https://fonts.google.com/specimen/Roboto
-ADD Roboto-Regular.tar.bz2 /usr/local/share/fonts/
+ADD Roboto-Regular.ttf /usr/local/share/fonts/
 
 # Copy all FFmpeg versions and cmake and other tools in /usr/local.
 COPY --from=build /usr/local /usr/local

@@ -94,3 +94,4 @@ RUN cd /tmp/fontconfig-2.14.2 && ./configure --disable-shared --enable-static &&
 # For libass, which depends on libfreetype6-dev, libfribidi-dev, libharfbuzz-dev, libfontconfig1-dev.
 ADD libass-0.17.1.tar.gz /tmp
 RUN cd /tmp/libass-0.17.1 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
+
