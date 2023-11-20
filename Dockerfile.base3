@@ -12,7 +12,7 @@ ARG JOBS=2
 RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS"
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
 #ADD sources.list /etc/apt/sources.list
@@ -21,14 +21,15 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get install -y aptitude gcc g++ make patch unzip python \
         autoconf automake libtool pkg-config zlib1g-dev \
-        liblzma-dev libzip-dev libbz2-dev tcl
+        liblzma-dev libzip-dev libbz2-dev tcl \
+        libfreetype6-dev libfribidi-dev libharfbuzz-dev libfontconfig1-dev
 
 # Libs path for app which depends on ssl, such as libsrt.
-ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/ssl/lib/pkgconfig
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/ssl/lib/pkgconfig
 
 # Libs path for FFmpeg(depends on serval libs), or it fail with:
 #       ERROR: speex not found using pkg-config
-ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig
 
 # To use if in RUN, see https://github.com/moby/moby/issues/7281#issuecomment-389440503
 # Note that only exists issue like "/bin/sh: 1: [[: not found" for Ubuntu20, no such problem in CentOS7.
@@ -63,3 +64,7 @@ RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
         cmake -DENABLE_SHARED=OFF ../../source && make -j${JOBS} && make install; \
     fi
 
+# Cost: x.s
+# For libass, which depends on libfreetype6-dev, libfribidi-dev, libharfbuzz-dev, libfontconfig1-dev.
+ADD libass-0.17.1.tar.gz /tmp
+RUN cd /tmp/libass-0.17.1 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
