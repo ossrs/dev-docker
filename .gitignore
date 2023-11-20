@@ -1,3 +1,17 @@
 .idea
 ffmpeg-5.0.2
 libass-0.17.1
+fribidi-1.0.13
+freetype-2.13.2
+harfbuzz-8.3.0
+expat-2.5.0
+fontconfig-2.14.2
+libpng-1.6.40
+*.ttf
+*.srt
+*.txt
+ffmpeg-5.0.2
+ffmpeg-5.0.2-libass
+ffmpeg-5.0.2-nolibass
+.DS_Store
+source.flv

@@ -22,7 +22,7 @@ RUN apt-get update && \
     apt-get install -y aptitude gcc g++ make patch unzip python \
         autoconf automake libtool pkg-config zlib1g-dev \
         liblzma-dev libzip-dev libbz2-dev tcl \
-        libfreetype6-dev libfribidi-dev libharfbuzz-dev libfontconfig1-dev
+        gperf python3
 
 # Libs path for app which depends on ssl, such as libsrt.
 ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/ssl/lib/pkgconfig
@@ -64,7 +64,33 @@ RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
         cmake -DENABLE_SHARED=OFF ../../source && make -j${JOBS} && make install; \
     fi
 
-# Cost: x.s
+# Cost: xs
+ADD libpng-1.6.40.tar.gz /tmp
+RUN cd /tmp/libpng-1.6.40 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
+
+# Cost: xs
+ADD fribidi-1.0.13.tar.bz2 /tmp
+RUN cd /tmp/fribidi-1.0.13 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
+
+# Cost: xs
+ADD harfbuzz-8.3.0.tar.bz2 /tmp
+RUN cd /tmp/harfbuzz-8.3.0 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
+
+# Cost: xs
+# Depends on libpng.
+ADD freetype-2.13.2.tar.gz /tmp
+RUN cd /tmp/freetype-2.13.2 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
+
+# Cost: xs
+ADD expat-2.5.0.tar.bz2 /tmp
+RUN cd /tmp/expat-2.5.0 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
+
+# Cost: xs
+# Depends on gperf, expat, freetype.
+ADD fontconfig-2.14.2.tar.bz2 /tmp
+RUN cd /tmp/fontconfig-2.14.2 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
+
+# Cost: 130.9s
 # For libass, which depends on libfreetype6-dev, libfribidi-dev, libharfbuzz-dev, libfontconfig1-dev.
 ADD libass-0.17.1.tar.gz /tmp
 RUN cd /tmp/libass-0.17.1 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
