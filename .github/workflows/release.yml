@@ -24,7 +24,7 @@ jobs:
             base4:  ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4']
             base50: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base50']
             base51: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base51']
-            base9:  ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4', 'Dockerfile.base50', 'Dockerfile.base51', 'Dockerfile.base9']
+            base999:  ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4', 'Dockerfile.base50', 'Dockerfile.base51', 'Dockerfile.base999']
       ################################################################
       # The github.ref is, for example, refs/tags/v5.0.145 or refs/tags/v5.0-r8
       # Generate variables like:
@@ -43,7 +43,7 @@ jobs:
       base4: ${{ steps.filter.outputs.base4 }}
       base50: ${{ steps.filter.outputs.base50 }}
       base51: ${{ steps.filter.outputs.base51 }}
-      base9: ${{ steps.filter.outputs.base9 }}
+      base999: ${{ steps.filter.outputs.base999 }}
       SRS_TAG: ${{ env.SRS_TAG }}
     runs-on: ubuntu-20.04
 
@@ -334,13 +334,13 @@ jobs:
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base51
     runs-on: ubuntu-20.04
 
-  docker-base9:
+  docker-base999:
     needs:
       - docker-base4
       - docker-base50
       - docker-base51
       - envs
-    if: ${{ always() && needs.envs.outputs.base9 == 'true' }}
+    if: ${{ always() && needs.envs.outputs.base999 == 'true' }}
     steps:
       ################################################################
       - name: Covert output to env
@@ -349,6 +349,16 @@ jobs:
       ################################################################
       - name: Checkout repository
         uses: actions/checkout@v3
+      ################################################################
+      - name: Remove unnecessary files
+        run: |
+          df -h
+          echo ""
+          echo "After removed some unused files."
+          echo ""
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+            /usr/local/share/powershell /usr/share/swift /usr/lib/jvm
+          df -h
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
@@ -367,8 +377,8 @@ jobs:
         run: |
           docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
             --output "type=image,push=true" \
-            -t ossrs/srs:${SRS_TAG}-base9 \
-            -f Dockerfile.base9 .
+            -t ossrs/srs:${SRS_TAG}-base999 \
+            -f Dockerfile.base999 .
       ################################################################
       - name: Login aliyun hub
         uses: docker/login-action@v2
@@ -379,15 +389,15 @@ jobs:
       - name: Copy to Aliyun registry
         uses: akhilerm/tag-push-action@v2.1.0
         with:
-          src: ossrs/srs:${{ env.SRS_TAG }}-base9
+          src: ossrs/srs:${{ env.SRS_TAG }}-base999
           dst: |
-            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base9
+            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base999
     runs-on: ubuntu-20.04
 
   docker-prod:
     needs:
       - envs
-      - docker-base9
+      - docker-base999
     if: ${{ always() }}
     steps:
       ################################################################
