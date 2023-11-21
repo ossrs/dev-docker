@@ -13,4 +13,5 @@ ffmpeg-5.0.2
 ffmpeg-5.0.2-libass
 ffmpeg-5.0.2-nolibass
 .DS_Store
-source.flv
+*.flv
+*.mp4

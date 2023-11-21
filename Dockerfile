@@ -4,7 +4,7 @@ ARG ARCH
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ossrs/srs:ubuntu20-base999 as build
+FROM ${ARCH}ossrs/srs:ubuntu20-base999999 as build
 
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
@@ -20,18 +20,8 @@ RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, TARGET
 
 WORKDIR /tmp/srs
 
-# See https://fonts.google.com/noto/specimen/Noto+Sans+TC
-ADD NotoSansTC-Regular.ttf /usr/local/share/fonts/
-# See https://fonts.google.com/specimen/Roboto
-ADD Roboto-Regular.ttf /usr/local/share/fonts/
-
 # Copy all FFmpeg versions and cmake and other tools in /usr/local.
 COPY --from=build /usr/local /usr/local
-COPY --from=build /usr/local/bin/ffmpeg4 /usr/local/bin/ffprobe4 /usr/local/bin/
-COPY --from=build /usr/local/bin/ffmpeg5 /usr/local/bin/ffprobe5 /usr/local/bin/
-# Note that for armv7, the ffmpeg5-hevc-over-rtmp is actually ffmpeg5.
-RUN rm -f /usr/local/bin/ffmpeg && ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg
-RUN rm -f /usr/local/bin/ffprobe && ln -sf /usr/local/bin/ffprobe5-hevc-over-rtmp /usr/local/bin/ffprobe
 # Note that the PATH has /usr/local/bin by default in ubuntu:focal.
 #ENV PATH=$PATH:/usr/local/bin
 

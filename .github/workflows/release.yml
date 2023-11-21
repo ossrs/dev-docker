@@ -24,7 +24,7 @@ jobs:
             base4:  ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4']
             base50: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base50']
             base51: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base51']
-            base999:  ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4', 'Dockerfile.base50', 'Dockerfile.base51', 'Dockerfile.base999']
+            base999999:  ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base4', 'Dockerfile.base50', 'Dockerfile.base51', 'Dockerfile.base999999']
       ################################################################
       # The github.ref is, for example, refs/tags/v5.0.145 or refs/tags/v5.0-r8
       # Generate variables like:
@@ -43,7 +43,7 @@ jobs:
       base4: ${{ steps.filter.outputs.base4 }}
       base50: ${{ steps.filter.outputs.base50 }}
       base51: ${{ steps.filter.outputs.base51 }}
-      base999: ${{ steps.filter.outputs.base999 }}
+      base999999: ${{ steps.filter.outputs.base999999 }}
       SRS_TAG: ${{ env.SRS_TAG }}
     runs-on: ubuntu-20.04
 
@@ -334,13 +334,13 @@ jobs:
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base51
     runs-on: ubuntu-20.04
 
-  docker-base999:
+  docker-base999999:
     needs:
       - docker-base4
       - docker-base50
       - docker-base51
       - envs
-    if: ${{ always() && needs.envs.outputs.base999 == 'true' }}
+    if: ${{ always() && needs.envs.outputs.base999999 == 'true' }}
     steps:
       ################################################################
       - name: Covert output to env
@@ -377,8 +377,8 @@ jobs:
         run: |
           docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
             --output "type=image,push=true" \
-            -t ossrs/srs:${SRS_TAG}-base999 \
-            -f Dockerfile.base999 .
+            -t ossrs/srs:${SRS_TAG}-base999999 \
+            -f Dockerfile.base999999 .
       ################################################################
       - name: Login aliyun hub
         uses: docker/login-action@v2
@@ -389,15 +389,15 @@ jobs:
       - name: Copy to Aliyun registry
         uses: akhilerm/tag-push-action@v2.1.0
         with:
-          src: ossrs/srs:${{ env.SRS_TAG }}-base999
+          src: ossrs/srs:${{ env.SRS_TAG }}-base999999
           dst: |
-            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base999
+            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base999999
     runs-on: ubuntu-20.04
 
   docker-prod:
     needs:
       - envs
-      - docker-base999
+      - docker-base999999
     if: ${{ always() }}
     steps:
       ################################################################
