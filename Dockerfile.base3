@@ -64,28 +64,28 @@ RUN if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
         cmake -DENABLE_SHARED=OFF ../../source && make -j${JOBS} && make install; \
     fi
 
-# Cost: xs
+# Cost: 204s
 ADD libpng-1.6.40.tar.gz /tmp
 RUN cd /tmp/libpng-1.6.40 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
 
-# Cost: xs
+# Cost: 128s
 ADD fribidi-1.0.13.tar.bz2 /tmp
 RUN cd /tmp/fribidi-1.0.13 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
 
-# Cost: xs
+# Cost: 2167s
 ADD harfbuzz-8.3.0.tar.bz2 /tmp
 RUN cd /tmp/harfbuzz-8.3.0 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
 
-# Cost: xs
+# Cost: 259s
 # Depends on libpng.
 ADD freetype-2.13.2.tar.gz /tmp
 RUN cd /tmp/freetype-2.13.2 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
 
-# Cost: xs
+# Cost: 174s
 ADD expat-2.5.0.tar.bz2 /tmp
 RUN cd /tmp/expat-2.5.0 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install
 
-# Cost: xs
+# Cost: 399s
 # Depends on gperf, expat, freetype.
 ADD fontconfig-2.14.2.tar.bz2 /tmp
 RUN cd /tmp/fontconfig-2.14.2 && ./configure --disable-shared --enable-static && make -j${JOBS} && make install

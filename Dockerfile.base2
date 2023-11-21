@@ -12,7 +12,7 @@ ARG JOBS=2
 RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS"
 
 # https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
 #ADD sources.list /etc/apt/sources.list
@@ -24,11 +24,11 @@ RUN apt-get update && \
         liblzma-dev libzip-dev libbz2-dev tcl
 
 # Libs path for app which depends on ssl, such as libsrt.
-ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/ssl/lib/pkgconfig
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/ssl/lib/pkgconfig
 
 # Libs path for FFmpeg(depends on serval libs), or it fail with:
 #       ERROR: speex not found using pkg-config
-ENV PKG_CONFIG_PATH $PKG_CONFIG_PATH:/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig
 
 # To use if in RUN, see https://github.com/moby/moby/issues/7281#issuecomment-389440503
 # Note that only exists issue like "/bin/sh: 1: [[: not found" for Ubuntu20, no such problem in CentOS7.
