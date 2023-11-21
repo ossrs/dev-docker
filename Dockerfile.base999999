@@ -24,8 +24,7 @@ WORKDIR /tmp/srs
 
 # See https://fonts.google.com/specimen/Roboto
 # See https://fonts.google.com/noto/specimen/Noto+Sans+SC
-# See https://fonts.google.com/noto/specimen/Noto+Sans+TC
-ADD Roboto-Regular.ttf NotoSansSC-Regular.ttf NotoSansTC-Regular.ttf /usr/local/share/fonts/
+ADD Roboto-Regular.ttf NotoSansSC-Regular.ttf /usr/local/share/fonts/
 
 # Copy all FFmpeg versions and cmake and other tools in /usr/local.
 COPY --from=build51 /usr/local /usr/local
