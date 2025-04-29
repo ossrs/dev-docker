@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       from:
-        description: 'From tag, such as ubuntu20-cache-23-11-10'
+        description: 'From tag, such as ubuntu20-cache'
         required: true
         type: string
       to:
@@ -16,7 +16,7 @@ on:
 jobs:
   docker:
     name: release-docker
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Build envs
         run: |
