@@ -43,7 +43,7 @@ jobs:
       base51: ${{ steps.filter.outputs.base51 }}
       base999999: ${{ steps.filter.outputs.base999999 }}
       SRS_TAG: ${{ env.SRS_TAG }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
   docker-base:
     needs:
@@ -90,7 +90,7 @@ jobs:
           src: ossrs/srs:${{ env.SRS_TAG }}-base
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
   docker-base2:
     needs:
@@ -138,7 +138,7 @@ jobs:
           src: ossrs/srs:${{ env.SRS_TAG }}-base2
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base2
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
   docker-base3:
     needs:
@@ -186,7 +186,7 @@ jobs:
           src: ossrs/srs:${{ env.SRS_TAG }}-base3
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base3
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
   docker-base50:
     needs:
@@ -234,7 +234,7 @@ jobs:
           src: ossrs/srs:${{ env.SRS_TAG }}-base50
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base50
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
   docker-base51:
     needs:
@@ -282,7 +282,7 @@ jobs:
           src: ossrs/srs:${{ env.SRS_TAG }}-base51
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base51
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
   docker-base999999:
     needs:
@@ -341,7 +341,7 @@ jobs:
           src: ossrs/srs:${{ env.SRS_TAG }}-base999999
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base999999
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
   docker-prod:
     needs:
@@ -382,7 +382,7 @@ jobs:
           src: ossrs/srs:${{ env.SRS_TAG }}
           dst: |
             ossrs/srs:${{ env.SRS_TAG_DATE }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
   docker-aliyun:
     needs:
@@ -409,5 +409,5 @@ jobs:
           dst: |
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}
             registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG_DATE }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 

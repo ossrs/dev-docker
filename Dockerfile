@@ -52,6 +52,7 @@ RUN apt install -y libasan5
 #ADD CherryPy-3.2.4.tar.gz2 /tmp
 #RUN cd /tmp/CherryPy-3.2.4 && python setup.py install
 
+# Install go, see https://go.dev/dl/
 ENV PATH=$PATH:/usr/local/go/bin
 RUN if [[ $TARGETARCH == 'amd64' ]]; then \
       curl -L https://go.dev/dl/go1.21.13.linux-amd64.tar.gz |tar -xz -C /usr/local; \
