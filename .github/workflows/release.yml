@@ -9,7 +9,7 @@ on:
 jobs:
   env-prod:
     name: setup env
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       ################################################################
       # Git checkout
@@ -32,7 +32,7 @@ jobs:
 
   docker-prod:
     name: for docker
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - env-prod
     steps:
@@ -70,7 +70,7 @@ jobs:
 
   aliyun-prod:
     name: for aliyun
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - env-prod
       - docker-prod
@@ -98,7 +98,7 @@ jobs:
 
   done:
     name: done
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - docker-prod
       - aliyun-prod
