@@ -8,7 +8,7 @@ on:
 
 jobs:
   env-prod:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       ################################################################
       # Git checkout
@@ -30,7 +30,7 @@ jobs:
       SRS_TAG: ${{ steps.srs-vars.outputs.SRS_TAG }}
 
   docker-prod:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - env-prod
     steps:
@@ -67,7 +67,7 @@ jobs:
       SRS_DOCKER_PROD_DONE: ok
 
   aliyun-prod:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - env-prod
       - docker-prod
@@ -96,7 +96,7 @@ jobs:
 
   done:
     name: done
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - docker-prod
       - aliyun-prod
