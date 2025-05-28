@@ -45,7 +45,7 @@ RUN apt-get install -y git gcc
 
 # Build SRS for cache, never install it.
 #     6.0release 4b64c5c5b Upgrade actions worlflow image to Ubuntu 22.04
-#     develop    3fbd609bc [origin/develop] 
+#     develop    974826800 update pion/webrtc to v4. v7.0.34 (#4359)
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
