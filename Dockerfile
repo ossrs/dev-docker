@@ -40,8 +40,8 @@ RUN which cmake && cmake --version
 RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 
 # Build SRS for cache, never install it.
-#     5.0release 316f4641a Don't compile libopus when enable sys-ffmpeg. v5.0.198 (#3851)
-#     develop    4372e32f7 Don't compile libopus when enable sys-ffmpeg. v5.0.198 v6.0.98 (#3851)
+#     6.0release 4b64c5c5b Upgrade actions worlflow image to Ubuntu 22.04
+#     develop    974826800 update pion/webrtc to v4. v7.0.34 (#4359)
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 # Note that cygwin build cache files for SRS in .github/workflows/release.yml file.
