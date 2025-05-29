@@ -9,7 +9,7 @@ on:
 jobs:
   envs:
     name: envs
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       # Git checkout
       - name: Checkout repository
@@ -67,7 +67,7 @@ jobs:
 
   docker:
     name: docker-hub
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - envs
       - cygwin64
@@ -102,7 +102,7 @@ jobs:
 
   aliyun:
     name: aliyun-hub
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - envs
       - docker
