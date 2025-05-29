@@ -57,7 +57,8 @@ jobs:
           (cd srs/trunk && git checkout develop && ./configure --utest=on --ffmpeg-opus=on && make utest && ./objs/srs_utest) &&
           tar jcf srs.tar.bz2 srs && pwd && du -sh *
       ##################################################################################################################
-      - uses: actions/upload-artifact@v3
+      # https://github.com/actions/upload-artifact
+      - uses: actions/upload-artifact@v4
         with:
           name: srs-cache
           path: srs.tar.bz2
