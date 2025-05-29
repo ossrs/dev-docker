@@ -53,7 +53,7 @@ jobs:
           cd $(cygpath -u $SRS_WORKSPACE) &&
           git clone https://github.com/ossrs/srs.git &&
           pwd && du -sh * && export PATH=$PATH:/usr/bin:/usr/local/bin &&
-          (cd srs/trunk && git checkout 5.0release && ./configure --utest=on && make utest && ./objs/srs_utest) &&
+          (cd srs/trunk && git checkout 6.0release && ./configure --utest=on && make utest && ./objs/srs_utest) &&
           (cd srs/trunk && git checkout develop && ./configure --utest=on --ffmpeg-opus=on && make utest && ./objs/srs_utest) &&
           tar jcf srs.tar.bz2 srs && pwd && du -sh *
       ##################################################################################################################
@@ -81,10 +81,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       ##################################################################################################################
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: srs-cache
-      - uses: geekyeggo/delete-artifact@v2
+      - uses: geekyeggo/delete-artifact@v5
         with:
           name: srs-cache
       ##################################################################################################################
