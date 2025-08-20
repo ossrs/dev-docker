@@ -42,8 +42,10 @@ RUN ls -lh /usr/local/bin/ffmpeg /usr/local/ssl
 RUN apt-get install -y git gcc
 
 # Build SRS for cache, never install it.
-#     5.0release 316f4641a Don't compile libopus when enable sys-ffmpeg. v5.0.198 (#3851)
-#     develop    4372e32f7 Don't compile libopus when enable sys-ffmpeg. v5.0.198 v6.0.98 (#3851)
+#
+#  6.0release    2ab3937a6 fix err memory leak in rtc to rtmp bridge. v6.0.174 (#4441)
+#  develop       5adf684f5 AI: Remove multi-threading support and change to single-thread architecture. v7.0.59 (#4445)
+#
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
