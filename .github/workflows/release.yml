@@ -79,19 +79,6 @@ jobs:
             --output "type=image,push=true" \
             -t ossrs/srs:${SRS_TAG}-base \
             -f Dockerfile.base .
-      ################################################################
-      - name: Login aliyun hub
-        uses: docker/login-action@v2
-        with:
-          registry: registry.cn-hangzhou.aliyuncs.com
-          username: "${{ secrets.ACR_USERNAME }}"
-          password: "${{ secrets.ACR_PASSWORD }}"
-      - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.1.0
-        with:
-          src: ossrs/srs:${{ env.SRS_TAG }}-base
-          dst: |
-            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base
     runs-on: ubuntu-22.04
 
   docker-base2:
@@ -127,19 +114,6 @@ jobs:
             --output "type=image,push=true" \
             -t ossrs/srs:${SRS_TAG}-base2 \
             -f Dockerfile.base2 .
-      ################################################################
-      - name: Login aliyun hub
-        uses: docker/login-action@v2
-        with:
-          registry: registry.cn-hangzhou.aliyuncs.com
-          username: "${{ secrets.ACR_USERNAME }}"
-          password: "${{ secrets.ACR_PASSWORD }}"
-      - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.1.0
-        with:
-          src: ossrs/srs:${{ env.SRS_TAG }}-base2
-          dst: |
-            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base2
     runs-on: ubuntu-22.04
 
   docker-base3:
@@ -175,19 +149,6 @@ jobs:
             --output "type=image,push=true" \
             -t ossrs/srs:${SRS_TAG}-base3 \
             -f Dockerfile.base3 .
-      ################################################################
-      - name: Login aliyun hub
-        uses: docker/login-action@v2
-        with:
-          registry: registry.cn-hangzhou.aliyuncs.com
-          username: "${{ secrets.ACR_USERNAME }}"
-          password: "${{ secrets.ACR_PASSWORD }}"
-      - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.1.0
-        with:
-          src: ossrs/srs:${{ env.SRS_TAG }}-base3
-          dst: |
-            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base3
     runs-on: ubuntu-22.04
 
   docker-base50:
@@ -223,19 +184,6 @@ jobs:
             --output "type=image,push=true" \
             -t ossrs/srs:${SRS_TAG}-base50 \
             -f Dockerfile.base50 .
-      ################################################################
-      - name: Login aliyun hub
-        uses: docker/login-action@v2
-        with:
-          registry: registry.cn-hangzhou.aliyuncs.com
-          username: "${{ secrets.ACR_USERNAME }}"
-          password: "${{ secrets.ACR_PASSWORD }}"
-      - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.1.0
-        with:
-          src: ossrs/srs:${{ env.SRS_TAG }}-base50
-          dst: |
-            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base50
     runs-on: ubuntu-22.04
 
   docker-base51:
@@ -271,19 +219,6 @@ jobs:
             --output "type=image,push=true" \
             -t ossrs/srs:${SRS_TAG}-base51 \
             -f Dockerfile.base51 .
-      ################################################################
-      - name: Login aliyun hub
-        uses: docker/login-action@v2
-        with:
-          registry: registry.cn-hangzhou.aliyuncs.com
-          username: "${{ secrets.ACR_USERNAME }}"
-          password: "${{ secrets.ACR_PASSWORD }}"
-      - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.1.0
-        with:
-          src: ossrs/srs:${{ env.SRS_TAG }}-base51
-          dst: |
-            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base51
     runs-on: ubuntu-22.04
 
   docker-base52:
@@ -319,19 +254,6 @@ jobs:
             --output "type=image,push=true" \
             -t ossrs/srs:${SRS_TAG}-base52 \
             -f Dockerfile.base52 .
-      ################################################################
-      - name: Login aliyun hub
-        uses: docker/login-action@v2
-        with:
-          registry: registry.cn-hangzhou.aliyuncs.com
-          username: "${{ secrets.ACR_USERNAME }}"
-          password: "${{ secrets.ACR_PASSWORD }}"
-      - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.1.0
-        with:
-          src: ossrs/srs:${{ env.SRS_TAG }}-base52
-          dst: |
-            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base52
     runs-on: ubuntu-22.04
 
   docker-base999999:
@@ -379,19 +301,6 @@ jobs:
             --output "type=image,push=true" \
             -t ossrs/srs:${SRS_TAG}-base999999 \
             -f Dockerfile.base999999 .
-      ################################################################
-      - name: Login aliyun hub
-        uses: docker/login-action@v2
-        with:
-          registry: registry.cn-hangzhou.aliyuncs.com
-          username: "${{ secrets.ACR_USERNAME }}"
-          password: "${{ secrets.ACR_PASSWORD }}"
-      - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.1.0
-        with:
-          src: ossrs/srs:${{ env.SRS_TAG }}-base999999
-          dst: |
-            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}-base999999
     runs-on: ubuntu-22.04
 
   docker-prod:
@@ -433,32 +342,5 @@ jobs:
           src: ossrs/srs:${{ env.SRS_TAG }}
           dst: |
             ossrs/srs:${{ env.SRS_TAG_DATE }}
-    runs-on: ubuntu-22.04
-
-  docker-aliyun:
-    needs:
-      - envs
-      - docker-prod
-    if: ${{ always() }}
-    steps:
-      ################################################################
-      - name: Covert output to env
-        run: |
-          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
-          echo "SRS_TAG_DATE=${{ needs.envs.outputs.SRS_TAG }}-$(date +%y-%m-%d)" >> $GITHUB_ENV
-      ################################################################
-      - name: Login aliyun hub
-        uses: docker/login-action@v2
-        with:
-          registry: registry.cn-hangzhou.aliyuncs.com
-          username: "${{ secrets.ACR_USERNAME }}"
-          password: "${{ secrets.ACR_PASSWORD }}"
-      - name: Copy to Aliyun registry
-        uses: akhilerm/tag-push-action@v2.1.0
-        with:
-          src: ossrs/srs:${{ env.SRS_TAG }}
-          dst: |
-            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG }}
-            registry.cn-hangzhou.aliyuncs.com/ossrs/srs:${{ env.SRS_TAG_DATE }}
     runs-on: ubuntu-22.04
 
