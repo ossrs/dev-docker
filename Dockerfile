@@ -45,15 +45,15 @@ RUN apt-get install -y git gcc
 
 # Build SRS for cache, never install it.
 #
-#  6.0release    2ab3937a6 fix err memory leak in rtc to rtmp bridge. v6.0.174 (#4441)
-#  develop       5adf684f5 AI: Remove multi-threading support and change to single-thread architecture. v7.0.59 (#4445)
+#  6.0release    c20bce987 RTX: Fix race condition for timer. v6.0.176 (#4470) (#4474)
+#  develop       7c1e87ef5 AI: Add more utests for kernel module. v7.0.81 (#4478)
 #
 # Pelease update this comment, if need to refresh the cached dependencies, like st/openssl/ffmpeg/libsrtp/libsrt etc.
 RUN mkdir -p /usr/local/srs-cache
 RUN cd /usr/local/srs-cache && git clone https://github.com/ossrs/srs.git
 # Setup the SRS trunk as workdir.
 WORKDIR /usr/local/srs-cache/srs/trunk
-RUN git checkout 5.0release && ./configure --jobs=${JOBS} && make -j${JOBS}
+RUN git checkout 6.0release && ./configure --jobs=${JOBS} && make -j${JOBS}
 RUN git checkout develop && ./configure --jobs=${JOBS} --ffmpeg-opus=off && make -j${JOBS}
 RUN du -sh /usr/local/srs-cache/srs/trunk/objs/*
 
