@@ -4,16 +4,16 @@ ARG ARCH
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ossrs/srs:ubuntu20-base50 as build50
-FROM ${ARCH}ossrs/srs:ubuntu20-base51 as build51
-FROM ${ARCH}ossrs/srs:ubuntu20-base52 as build52
-FROM ${ARCH}ossrs/srs:ubuntu20-base53 as build53
+FROM ${ARCH}ossrs/srs:ubuntu20-base50 AS build50
+FROM ${ARCH}ossrs/srs:ubuntu20-base51 AS build51
+FROM ${ARCH}ossrs/srs:ubuntu20-base52 AS build52
+FROM ${ARCH}ossrs/srs:ubuntu20-base53 AS build53
 
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ubuntu:focal as dist
+FROM ${ARCH}ubuntu:focal AS dist
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM

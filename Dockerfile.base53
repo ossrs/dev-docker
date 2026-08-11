@@ -37,13 +37,6 @@ SHELL ["/bin/bash", "-c"]
 # The cmake should be ready in base image.
 RUN which cmake && cmake --version
 
-# FFmpeg 8.1 requires NASM 2.15 or newer for its x86 assembly. The base3 image
-# provides NASM 2.14, so upgrade it only for this FFmpeg layer.
-ADD nasm-2.16.03.tar.bz2 /tmp
-RUN cd /tmp/nasm-2.16.03 && ./configure && make -j${JOBS} && make install && \
-    nasm -v && \
-    rm -rf /tmp/nasm-2.16.03
-
 # Cost: TBD.
 # Build FFmpeg, static link libraries.
 ADD ffmpeg-8.1.2.tar.bz2 /tmp

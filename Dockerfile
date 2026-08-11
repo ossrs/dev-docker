@@ -4,7 +4,7 @@ ARG ARCH
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ossrs/srs:ubuntu20-base999999 as build
+FROM ${ARCH}ossrs/srs:ubuntu20-base999999 AS build
 
 # Remove fontconfig tools.
 RUN rm -f /usr/local/bin/fc-*
@@ -13,7 +13,7 @@ RUN rm -f /usr/local/bin/fc-*
 #--------------------------dist------------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ubuntu:focal as dist
+FROM ${ARCH}ubuntu:focal AS dist
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM

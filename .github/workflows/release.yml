@@ -11,9 +11,9 @@ jobs:
     steps:
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       ################################################################
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           base: 'ubuntu20'
@@ -60,18 +60,18 @@ jobs:
           echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v4
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -95,18 +95,18 @@ jobs:
           echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v4
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -130,18 +130,18 @@ jobs:
           echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v4
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -165,18 +165,18 @@ jobs:
           echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v4
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -200,18 +200,18 @@ jobs:
           echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v4
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -235,18 +235,18 @@ jobs:
           echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v4
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -270,17 +270,17 @@ jobs:
           echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v4
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -307,7 +307,7 @@ jobs:
           echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       ################################################################
       - name: Remove unnecessary files
         run: |
@@ -322,13 +322,13 @@ jobs:
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v4
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -353,18 +353,18 @@ jobs:
           echo "SRS_TAG_DATE=${{ needs.envs.outputs.SRS_TAG }}-$(date +%y-%m-%d)" >> $GITHUB_ENV
       ################################################################
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       ################################################################
       # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v4
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
       ################################################################
       - name: Login docker hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v4
         with:
           username: "${{ secrets.DOCKER_USERNAME }}"
           password: "${{ secrets.DOCKER_PASSWORD }}"
@@ -372,11 +372,6 @@ jobs:
         run: |
           docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
             --output "type=image,push=true" \
-            -t ossrs/srs:$SRS_TAG .
-      - name: Copy to docker registry
-        uses: akhilerm/tag-push-action@v2.1.0
-        with:
-          src: ossrs/srs:${{ env.SRS_TAG }}
-          dst: |
-            ossrs/srs:${{ env.SRS_TAG_DATE }}
+            -t ossrs/srs:$SRS_TAG \
+            -t ossrs/srs:$SRS_TAG_DATE .
     runs-on: ubuntu-22.04

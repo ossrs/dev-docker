@@ -4,7 +4,7 @@ ARG ARCH
 #--------------------------build-----------------------------------------------------
 #------------------------------------------------------------------------------------
 # http://releases.ubuntu.com/focal/
-FROM ${ARCH}ubuntu:focal as build
+FROM ${ARCH}ubuntu:focal AS build
 
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
@@ -47,10 +47,11 @@ RUN cd /tmp/openssl-1.1.1j && \
 #    ./config -no-shared -no-threads --prefix=/usr/local/ssl && make -j${JOBS} && make install_sw
 
 # Cost: 698.9s
-# For FFMPEG
-ADD nasm-2.14.tar.bz2 /tmp
-RUN cd /tmp/nasm-2.14 && ./configure && make -j${JOBS} && make install && \
-    rm -rf /tmp/nasm-2.14
+# For FFmpeg. FFmpeg 8.1 requires NASM 2.15 or newer for x86 assembly.
+ADD nasm-2.16.03.tar.bz2 /tmp
+RUN cd /tmp/nasm-2.16.03 && ./configure && make -j${JOBS} && make install && \
+    nasm -v && \
+    rm -rf /tmp/nasm-2.16.03
 
 # Cost: 1293.6s
 # For aac
