@@ -7,6 +7,7 @@ ARG ARCH
 FROM ${ARCH}ossrs/srs:ubuntu20-base50 as build50
 FROM ${ARCH}ossrs/srs:ubuntu20-base51 as build51
 FROM ${ARCH}ossrs/srs:ubuntu20-base52 as build52
+FROM ${ARCH}ossrs/srs:ubuntu20-base53 as build53
 
 #------------------------------------------------------------------------------------
 #--------------------------dist------------------------------------------------------
@@ -27,16 +28,19 @@ WORKDIR /tmp/srs
 ADD Roboto-Regular.ttf NotoSansSC-Regular.ttf /usr/local/share/fonts/
 
 # Copy all FFmpeg versions and cmake and other tools in /usr/local.
-COPY --from=build51 /usr/local /usr/local
+# Use the FFmpeg 8 build as the base so its libraries and runtime files are available.
+COPY --from=build53 /usr/local /usr/local
+COPY --from=build51 /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffprobe5-hevc-over-rtmp /usr/local/bin/
 COPY --from=build50 /usr/local/bin/ffmpeg5 /usr/local/bin/ffprobe5 /usr/local/bin/
 COPY --from=build52 /usr/local/bin/ffmpeg7 /usr/local/bin/ffprobe7 /usr/local/bin/
 
-# Note that for armv7, the ffmpeg5-hevc-over-rtmp is actually ffmpeg5.
-RUN rm -f /usr/local/bin/ffmpeg && ln -sf /usr/local/bin/ffmpeg5-hevc-over-rtmp /usr/local/bin/ffmpeg && \
-    rm -f /usr/local/bin/ffprobe && ln -sf /usr/local/bin/ffprobe5-hevc-over-rtmp /usr/local/bin/ffprobe && \
+# FFmpeg 8 supports HEVC over Enhanced RTMP/FLV without the legacy FFmpeg 5 patch.
+RUN rm -f /usr/local/bin/ffmpeg && ln -sf /usr/local/bin/ffmpeg8 /usr/local/bin/ffmpeg && \
+    rm -f /usr/local/bin/ffprobe && ln -sf /usr/local/bin/ffprobe8 /usr/local/bin/ffprobe && \
+    /usr/local/bin/ffmpeg -version | head -n 1 | grep -q 'ffmpeg version 8.1.2' && \
+    /usr/local/bin/ffprobe -version | head -n 1 | grep -q 'ffprobe version 8.1.2' && \
     echo "The size of binary:" && du -sh /usr/local/* && \
     echo "The usage of disk:" && df -h \
 
 # Note that the PATH has /usr/local/bin by default in ubuntu:focal.
 #ENV PATH=$PATH:/usr/local/bin
-

@@ -1,0 +1,83 @@
+ARG ARCH
+
+#------------------------------------------------------------------------------------
+#--------------------------build-----------------------------------------------------
+#------------------------------------------------------------------------------------
+# http://releases.ubuntu.com/focal/
+FROM ${ARCH}ossrs/srs:ubuntu20-base3 as build
+
+ARG BUILDPLATFORM
+ARG TARGETPLATFORM
+ARG JOBS=2
+RUN echo "BUILDPLATFORM: $BUILDPLATFORM, TARGETPLATFORM: $TARGETPLATFORM, JOBS: $JOBS"
+
+# https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update the mirror from aliyun, @see https://segmentfault.com/a/1190000022619136
+#ADD sources.list /etc/apt/sources.list
+#RUN apt-get update
+
+RUN apt-get update && \
+    apt-get install -y aptitude gcc g++ make patch unzip python \
+        autoconf automake libtool pkg-config zlib1g-dev \
+        liblzma-dev libzip-dev libbz2-dev tcl
+
+# Libs path for app which depends on ssl, such as libsrt.
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/ssl/lib/pkgconfig
+
+# Libs path for FFmpeg(depends on serval libs), or it fail with:
+#       ERROR: speex not found using pkg-config
+ENV PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig:/usr/local/lib64/pkgconfig
+
+# To use if in RUN, see https://github.com/moby/moby/issues/7281#issuecomment-389440503
+# Note that only exists issue like "/bin/sh: 1: [[: not found" for Ubuntu20, no such problem in CentOS7.
+SHELL ["/bin/bash", "-c"]
+
+# The cmake should be ready in base image.
+RUN which cmake && cmake --version
+
+# Cost: TBD.
+# Build FFmpeg, static link libraries.
+ADD ffmpeg-8.1.2.tar.bz2 /tmp
+RUN FFOPTIONS=""; if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
+        FFOPTIONS="$FFOPTIONS --enable-libx265"; \
+    fi; \
+    cd /tmp/ffmpeg-8.1.2 && ./configure --enable-pthreads --extra-libs=-lpthread \
+        --pkg-config-flags='--static' \
+        --enable-gpl --enable-nonfree \
+        --enable-bzlib --enable-zlib \
+        --enable-libx264 --enable-libmp3lame --enable-libfdk-aac \
+        --enable-libxml2 --enable-demuxer=dash \
+        --enable-openssl --enable-protocol=tls --enable-protocol=rtmps \
+        --enable-protocol=dtls --enable-muxer=whip \
+        --enable-filter=drawtext --enable-libfreetype --enable-libfontconfig \
+        --enable-libass \
+        --enable-libsrt ${FFOPTIONS} && \
+    make -j${JOBS} && make install && \
+    rm -rf /tmp/ffmpeg-8.1.2 && \
+    echo "FFmpeg8 build and install successfully"
+RUN cp /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg8 && \
+    cp /usr/local/bin/ffprobe /usr/local/bin/ffprobe8
+
+# Verify the FFmpeg 8 binaries, WHIP muxer, and HEVC Enhanced FLV snapshot path.
+# The armv7 build has no libx265 encoder, but still includes the native HEVC decoder.
+RUN /usr/local/bin/ffmpeg8 -version && /usr/local/bin/ffprobe8 -version && \
+    /usr/local/bin/ffmpeg8 -hide_banner -muxers | \
+        grep -Eq '^[[:space:]]*E[[:space:]]+whip[[:space:]]' && \
+    /usr/local/bin/ffmpeg8 -hide_banner -protocols | \
+        grep -Eq '^[[:space:]]*dtls[[:space:]]*$' && \
+    if [[ $TARGETPLATFORM != 'linux/arm/v7' ]]; then \
+        /usr/local/bin/ffmpeg8 -hide_banner -loglevel error \
+            -f lavfi -i testsrc2=size=160x90:rate=1 -frames:v 1 \
+            -c:v libx265 -preset ultrafast -f flv -y /tmp/hevc.flv && \
+        /usr/local/bin/ffprobe8 -v error -select_streams v:0 \
+            -show_entries stream=codec_name -of default=noprint_wrappers=1 \
+            /tmp/hevc.flv | grep -q '^codec_name=hevc$' && \
+        /usr/local/bin/ffmpeg8 -hide_banner -loglevel error \
+            -f flv -i /tmp/hevc.flv -frames:v 1 -c:v png \
+            -f image2 -y /tmp/hevc-%01d.png && \
+        test -s /tmp/hevc-1.png && \
+        rm -f /tmp/hevc.flv /tmp/hevc-1.png; \
+    fi
+RUN ls -lh /usr/local/bin/*

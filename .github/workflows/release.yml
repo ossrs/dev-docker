@@ -24,7 +24,8 @@ jobs:
             base50: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base50']
             base51: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base51']
             base52: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base52']
-            base999999:  ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base50', 'Dockerfile.base51', 'Dockerfile.base52', 'Dockerfile.base999999']
+            base53: ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base53']
+            base999999:  ['Dockerfile.base', 'Dockerfile.base2', 'Dockerfile.base3', 'Dockerfile.base50', 'Dockerfile.base51', 'Dockerfile.base52', 'Dockerfile.base53', 'Dockerfile.base999999']
       ################################################################
       # The github.ref is, for example, refs/tags/v5.0.145 or refs/tags/v5.0-r8
       # Generate variables like:
@@ -43,6 +44,7 @@ jobs:
       base50: ${{ steps.filter.outputs.base50 }}
       base51: ${{ steps.filter.outputs.base51 }}
       base52: ${{ steps.filter.outputs.base52 }}
+      base53: ${{ steps.filter.outputs.base53 }}
       base999999: ${{ steps.filter.outputs.base999999 }}
       SRS_TAG: ${{ env.SRS_TAG }}
     runs-on: ubuntu-22.04
@@ -256,11 +258,46 @@ jobs:
             -f Dockerfile.base52 .
     runs-on: ubuntu-22.04
 
+  docker-base53:
+    needs:
+      - docker-base3
+      - envs
+    if: ${{ always() && needs.envs.outputs.base53 == 'true' }}
+    steps:
+      ################################################################
+      - name: Covert output to env
+        run: |
+          echo "SRS_TAG=${{ needs.envs.outputs.SRS_TAG }}" >> $GITHUB_ENV
+      ################################################################
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      ################################################################
+      # See https://github.com/crazy-max/ghaction-docker-buildx#moved-to-docker-organization
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      # https://github.com/docker/setup-buildx-action
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      ################################################################
+      - name: Login docker hub
+        uses: docker/login-action@v2
+        with:
+          username: "${{ secrets.DOCKER_USERNAME }}"
+          password: "${{ secrets.DOCKER_PASSWORD }}"
+      - name: Build and push to docker registry
+        run: |
+          docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 \
+            --output "type=image,push=true" \
+            -t ossrs/srs:${SRS_TAG}-base53 \
+            -f Dockerfile.base53 .
+    runs-on: ubuntu-22.04
+
   docker-base999999:
     needs:
       - docker-base50
       - docker-base51
       - docker-base52
+      - docker-base53
       - envs
     if: ${{ always() && needs.envs.outputs.base999999 == 'true' }}
     steps:
@@ -343,4 +380,3 @@ jobs:
           dst: |
             ossrs/srs:${{ env.SRS_TAG_DATE }}
     runs-on: ubuntu-22.04
-
